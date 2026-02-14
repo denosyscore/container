@@ -1,0 +1,21 @@
+{
+  "name": "denosyscore/container",
+  "description": "Dependency injection container and tooling",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "psr/container": "^2.0",
+    "denosyscore/contracts": "^0.1",
+    "denosyscore/events": "^0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "CFXP\\Core\\": "src/",
+      "CFXP\\Container\\": "src/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
