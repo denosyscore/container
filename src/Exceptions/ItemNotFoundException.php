@@ -1,6 +1,6 @@
 <?php
 
-namespace CFXP\Core\Exceptions;
+namespace Denosys\Container\Exceptions;
 
 class ItemNotFoundException extends \Exception
 {}

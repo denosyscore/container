@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Resolution;
+namespace Denosys\Container\Resolution;
 
-use CFXP\Core\Container\ContainerInterface;
-use CFXP\Core\Exceptions\ContainerResolutionException;
+use Denosys\Container\ContainerInterface;
+use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Manages resolution of multiple implementations for interfaces and abstract classes.

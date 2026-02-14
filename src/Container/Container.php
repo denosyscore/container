@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container;
+namespace Denosys\Container;
 
 use Throwable;
 use ReflectionUnionType;
 use ReflectionNamedType;
-use CFXP\Core\Events\Dispatcher;
-use CFXP\Core\Events\ListenerProvider;
-use CFXP\Core\Container\Events\ResolutionDone;
-use CFXP\Core\Container\Events\ResolutionFailed;
-use CFXP\Core\Container\Events\BindingRegistered;
-use CFXP\Core\Container\Events\ResolutionStarting;
-use CFXP\Core\Container\Binding\ContextualBindingManager;
-use CFXP\Core\Container\Binding\TaggedBindingRegistry;
-use CFXP\Core\Container\Binding\ConditionalBindingResolver;
-use CFXP\Core\Container\Injection\MethodInjector;
-use CFXP\Core\Container\Resolution\MultiResolutionManager;
-use CFXP\Core\Container\Resolution\ScopedBindingContext;
-use CFXP\Core\Container\Resolution\LazyResolutionProxy;
-use CFXP\Core\Container\Performance\ReflectionCache;
-use CFXP\Core\Container\Performance\PerformanceProfiler;
-use CFXP\Core\Container\Performance\ContainerCompiler;
-use CFXP\Core\Container\Validation\ContainerValidator;
-use CFXP\Core\Container\Testing\MockBindingManager;
-use CFXP\Core\Container\Decorators\DecoratorChain;
-use CFXP\Core\Exceptions\ContainerResolutionException;
-use CFXP\Core\Exceptions\NotFoundException;
-use CFXP\Core\Exceptions\ContainerException;
+use Denosys\Events\Dispatcher;
+use Denosys\Events\ListenerProvider;
+use Denosys\Container\Events\ResolutionDone;
+use Denosys\Container\Events\ResolutionFailed;
+use Denosys\Container\Events\BindingRegistered;
+use Denosys\Container\Events\ResolutionStarting;
+use Denosys\Container\Binding\ContextualBindingManager;
+use Denosys\Container\Binding\TaggedBindingRegistry;
+use Denosys\Container\Binding\ConditionalBindingResolver;
+use Denosys\Container\Injection\MethodInjector;
+use Denosys\Container\Resolution\MultiResolutionManager;
+use Denosys\Container\Resolution\ScopedBindingContext;
+use Denosys\Container\Resolution\LazyResolutionProxy;
+use Denosys\Container\Performance\ReflectionCache;
+use Denosys\Container\Performance\PerformanceProfiler;
+use Denosys\Container\Performance\ContainerCompiler;
+use Denosys\Container\Validation\ContainerValidator;
+use Denosys\Container\Testing\MockBindingManager;
+use Denosys\Container\Decorators\DecoratorChain;
+use Denosys\Container\Exceptions\ContainerResolutionException;
+use Denosys\Container\Exceptions\NotFoundException;
+use Denosys\Container\Exceptions\ContainerException;
 use ReflectionException;
 use Closure;
 

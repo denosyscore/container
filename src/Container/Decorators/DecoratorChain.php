@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Decorators;
+namespace Denosys\Container\Decorators;
 
-use CFXP\Core\Container\ContainerInterface;
+use Denosys\Container\ContainerInterface;
 
 /**
  * Manages decorator chains for services.

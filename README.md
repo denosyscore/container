@@ -14,7 +14,7 @@ composer require denosyscore/container
 
 - src/Container/* (legacy namespace)
 - src/Exceptions/* (container-related exceptions)
-- src/*.php for CFXP\\Container\\* extracted namespace
+- src/*.php for Denosys\\Container\\* extracted namespace
 
 ## Development
 

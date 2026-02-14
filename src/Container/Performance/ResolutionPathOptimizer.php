@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Performance;
+namespace Denosys\Container\Performance;
 
-use CFXP\Core\Container\ContainerInterface;
+use Denosys\Container\ContainerInterface;
 
 /**
  * Resolution path optimizer for frequently accessed services.

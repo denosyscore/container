@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Binding;
+namespace Denosys\Container\Binding;
 
-use CFXP\Core\Container\ContextualBindingBuilder;
-use CFXP\Core\Container\Container;
-use CFXP\Core\Exceptions\ContainerResolutionException;
+use Denosys\Container\ContextualBindingBuilder;
+use Denosys\Container\Container;
+use Denosys\Container\Exceptions\ContainerResolutionException;
 use Closure;
 
 /**

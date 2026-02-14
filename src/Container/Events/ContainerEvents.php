@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Events;
+namespace Denosys\Container\Events;
 
 /**
  * Container event types and event classes.

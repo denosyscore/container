@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Resolution;
+namespace Denosys\Container\Resolution;
 
-use CFXP\Core\Container\LazyProxy;
-use CFXP\Core\Container\ContainerInterface;
+use Denosys\Container\LazyProxy;
+use Denosys\Container\ContainerInterface;
 
 /**
  * Lazy-loading proxy implementation that defers service instantiation until first access.

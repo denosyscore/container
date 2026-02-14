@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Analysis;
+namespace Denosys\Container\Analysis;
 
-use CFXP\Core\Exceptions\ContainerResolutionException;
-use CFXP\Core\Container\IntrospectableContainerInterface;
+use Denosys\Container\Exceptions\ContainerResolutionException;
+use Denosys\Container\IntrospectableContainerInterface;
 
 /**
  * Builds and analyzes dependency graphs for container services.

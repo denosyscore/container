@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Performance;
+namespace Denosys\Container\Performance;
 
 use Closure;
-use CFXP\Core\Container\Container;
-use CFXP\Core\Exceptions\ContainerResolutionException;
+use Denosys\Container\Container;
+use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Container compiler for generating optimized production code.
@@ -42,7 +42,7 @@ class ContainerCompiler
         array $options = []
     ) {
         $this->compiledClassName = $options['class_name'] ?? 'CompiledContainer';
-        $this->compiledNamespace = $options['namespace'] ?? 'CFXP\\Core\\Container\\Compiled';
+        $this->compiledNamespace = $options['namespace'] ?? 'Denosys\\Container\\Compiled';
         $this->options = array_merge([
             'optimize_singletons' => true,
             'inline_simple_bindings' => true,
@@ -305,8 +305,8 @@ private function analyzeContainer(): array
         $code .= "declare(strict_types=1);\n\n";
         $code .= "namespace {$this->compiledNamespace};\n\n";
         $code .= "use Closure;\n";
-        $code .= "use CFXP\\Core\\Container\\Container;\n";
-        $code .= "use CFXP\\Core\\Container\\ContainerInterface;\n\n";
+        $code .= "use Denosys\\Container\\Container;\n";
+        $code .= "use Denosys\\Container\\ContainerInterface;\n\n";
 
         if ($this->options['include_debug_info']) {
             $code .= "/**\n";

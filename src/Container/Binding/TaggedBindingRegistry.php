@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Binding;
+namespace Denosys\Container\Binding;
 
-use CFXP\Core\Container\ContainerInterface;
+use Denosys\Container\ContainerInterface;
 
 /**
  * Registry for managing tagged services in the container.

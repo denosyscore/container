@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Testing;
+namespace Denosys\Container\Testing;
 
-use CFXP\Core\Container\Container;
+use Denosys\Container\Container;
 use PHPUnit\Framework\Assert;
 
 /**

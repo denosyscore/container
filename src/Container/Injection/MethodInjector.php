@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Injection;
+namespace Denosys\Container\Injection;
 
-use CFXP\Core\Container\Performance\ReflectionCache;
-use CFXP\Core\Container\ContainerInterface;
-use CFXP\Core\Exceptions\ContainerResolutionException;
+use Denosys\Container\Performance\ReflectionCache;
+use Denosys\Container\ContainerInterface;
+use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Method injector for automatic dependency injection into callable methods.

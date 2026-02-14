@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container;
+namespace Denosys\Container;
 
 /**
  * Service spy for monitoring and testing service interactions.

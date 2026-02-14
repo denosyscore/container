@@ -6,13 +6,13 @@
   "require": {
     "php": "^8.2",
     "psr/container": "^2.0",
-    "denosyscore/contracts": "^0.1",
-    "denosyscore/events": "^0.1"
+    "denosyscore/contracts": "^0.2",
+    "denosyscore/events": "^0.2"
   },
   "autoload": {
     "psr-4": {
-      "CFXP\\Core\\": "src/",
-      "CFXP\\Container\\": "src/"
+      "Denosys\\\\Container\\\\": "src/Container/",
+      "Denosys\\\\Container\\\\Exceptions\\\\": "src/Exceptions/"
     }
   },
   "config": {

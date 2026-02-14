@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Exceptions;
+namespace Denosys\Container\Exceptions;
 
 use Psr\Container\ContainerExceptionInterface;
 use Exception;

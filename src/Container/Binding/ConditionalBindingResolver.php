@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Binding;
+namespace Denosys\Container\Binding;
 
 /**
  * Placeholder for conditional binding resolver.
@@ -22,7 +22,7 @@ class ConditionalBindingResolver
     }
 
     /**
-     * @param \CFXP\Core\Container\ContainerInterface $container
+     * @param \Denosys\Container\ContainerInterface $container
      */
     public function resolve(string $abstract, $container): mixed
     {

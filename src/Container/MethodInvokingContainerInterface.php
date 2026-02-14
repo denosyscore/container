@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container;
+namespace Denosys\Container;
 
 /**
  * Interface for containers that can invoke methods with automatic DI.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Validation;
+namespace Denosys\Container\Validation;
 
-use CFXP\Core\Container\Container;
-use CFXP\Core\Container\ValidationResult;
-use CFXP\Core\Container\ValidationIssue;
+use Denosys\Container\Container;
+use Denosys\Container\ValidationResult;
+use Denosys\Container\ValidationIssue;
 
 /**
  * Container validator for pre-runtime validation.

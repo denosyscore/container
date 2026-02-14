@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace CFXP\Core\Container\Testing;
+namespace Denosys\Container\Testing;
 
-use CFXP\Core\Container\Container;
-use CFXP\Core\Container\ContainerInterface;
+use Denosys\Container\Container;
+use Denosys\Container\ContainerInterface;
 
 /**
  * Test container builder for creating isolated test environments.
