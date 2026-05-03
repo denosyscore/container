@@ -13,7 +13,8 @@ class NoDepsClass {}
 class OneDep { public function __construct(public NoDepsClass $dep) {} }
 class TwoDeps { public function __construct(public NoDepsClass $a, public OneDep $b) {} }
 class WithBuiltinDefault { public function __construct(public string $name = 'hello') {} }
-class WithNullable { public function __construct(public ?NoDepsClass $dep = null) {} }
+interface UnresolvableInterface {}
+class WithNullable { public function __construct(public ?UnresolvableInterface $dep = null) {} }
 class WithUnionType { public function __construct(public NoDepsClass|OneDep $dep) {} }
 
 interface SomeInterface2 {}
@@ -57,7 +58,7 @@ class ReflectionAutowiringTest extends TestCase
 
     public function testNullableParameterResolvesToNull(): void
     {
-        // SomeInterface2 is not bound, but parameter is nullable
+        // UnresolvableInterface has no binding and cannot be autowired; nullable falls back to null
         $result = $this->container->get(WithNullable::class);
         self::assertNull($result->dep);
     }
