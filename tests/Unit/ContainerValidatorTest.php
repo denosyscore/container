@@ -84,7 +84,7 @@ class ContainerValidatorTest extends TestCase
 
     public function testInterfaceBoundToItselfIsWarning(): void
     {
-        // bind() with no second arg → concrete_class = abstract itself
+        // bind() with no second arg -> concrete_class = abstract itself
         $this->container->bind(ValidatorTestInterface::class);
 
         $result = $this->validator->validate($this->container);
