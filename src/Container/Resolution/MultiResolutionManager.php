@@ -242,24 +242,19 @@ class MultiResolutionManager
         $declaredClasses = get_declared_classes();
         
         foreach ($declaredClasses as $class) {
-            try {
-                $reflection = new \ReflectionClass($class);
-                
-                // Skip abstract classes and interfaces
-                if ($reflection->isAbstract() || $reflection->isInterface()) {
-                    continue;
-                }
+            $reflection = new \ReflectionClass($class);
 
-                // Check if the class implements the interface or extends the abstract class
-                if ($reflection->implementsInterface($abstract) || $reflection->isSubclassOf($abstract)) {
-                    // Only include if the container can resolve it
-                    if ($container->has($class)) {
-                        $implementations[] = $class;
-                    }
-                }
-            } catch (\ReflectionException $e) {
-                // Skip classes that can't be reflected
+            // Skip abstract classes and interfaces
+            if ($reflection->isAbstract() || $reflection->isInterface()) {
                 continue;
+            }
+
+            // Check if the class implements the interface or extends the abstract class
+            if ($reflection->implementsInterface($abstract) || $reflection->isSubclassOf($abstract)) {
+                // Only include if the container can resolve it
+                if ($container->has($class)) {
+                    $implementations[] = $class;
+                }
             }
         }
 
@@ -271,12 +266,8 @@ class MultiResolutionManager
      */
     private function isAbstractClass(string $class): bool
     {
-        try {
-            $reflection = new \ReflectionClass($class);
-            return $reflection->isAbstract() && !$reflection->isInterface();
-        } catch (\ReflectionException $e) {
-            return false;
-        }
+        $reflection = new \ReflectionClass($class);
+        return $reflection->isAbstract() && !$reflection->isInterface();
     }
 
     /**
