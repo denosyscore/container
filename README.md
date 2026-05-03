@@ -1,6 +1,11 @@
 # denosyscore/container
 
-A PSR-11 compliant dependency injection container for PHP 8.2+. Supports autowiring, contextual bindings, tagged services, lazy proxies, scoped lifetimes, method injection, decorators, and built-in testing and profiling utilities.
+A PSR-11 compliant dependency injection container for PHP 8.2+. Supports autowiring, contextual bindings, tagged services, scoped contexts, lazy proxies, method injection, decorators, mocking, validation, and performance profiling.
+
+## Requirements
+
+- PHP 8.2+
+- `psr/container ^2.0`
 
 ## Installation
 
@@ -10,377 +15,315 @@ composer require denosyscore/container
 
 ## Basic Usage
 
-### bind()
+### Binding
 
-Register an abstract (interface or string key) to a concrete implementation:
+Register an abstract (interface or class name) to a concrete implementation.
 
 ```php
 use Denosys\Container\Container;
 
 $container = new Container();
 
-// Interface to concrete class
+// Bind an interface to a concrete class
 $container->bind(LoggerInterface::class, FileLogger::class);
 
-// Factory closure
-$container->bind(DatabaseConnection::class, function (Container $c) {
-    return new DatabaseConnection(config('db.dsn'));
+// Bind with a factory closure
+$container->bind(LoggerInterface::class, function ($container) {
+    return new FileLogger('/var/log/app.log');
 });
 
 $logger = $container->get(LoggerInterface::class);
 ```
 
-### singleton()
+### Singletons
 
-Resolved once; the same instance is returned on every subsequent call:
+Use `singleton()` to share a single instance across all resolutions.
 
 ```php
-$container->singleton(CacheManager::class, RedisCacheManager::class);
+$container->singleton(DatabaseConnection::class, function ($container) {
+    return new DatabaseConnection('mysql://localhost/mydb');
+});
 
-$a = $container->get(CacheManager::class);
-$b = $container->get(CacheManager::class);
+$a = $container->get(DatabaseConnection::class);
+$b = $container->get(DatabaseConnection::class);
 
-assert($a === $b); // true
+assert($a === $b); // true — same instance
 ```
 
-### instance()
+### Pre-built Instances
 
-Register a pre-built object as a shared instance:
+Register an already-constructed object with `instance()`.
 
 ```php
-$container->instance(Config::class, new Config(['debug' => true]));
+$connection = new DatabaseConnection('mysql://localhost/mydb');
+$container->instance(DatabaseConnection::class, $connection);
 ```
 
-### alias()
+### Aliases
 
-Create a short name for a bound abstract. The abstract must already be bound:
+Create a short name for an existing binding. The target must already be bound.
 
 ```php
-$container->bind(PaymentGateway::class, StripeGateway::class);
-$container->alias('stripe', PaymentGateway::class);
+$container->singleton(EventDispatcher::class, MyDispatcher::class);
+$container->alias('events', EventDispatcher::class);
 
-$gateway = $container->get('stripe');
+$dispatcher = $container->get('events');
 ```
 
-### extend()
+### Extending Bindings
 
-Wrap an existing binding or resolved instance with additional behavior:
+Wrap or modify an existing binding after it has been registered.
 
 ```php
-$container->singleton(MailerInterface::class, SmtpMailer::class);
+$container->singleton(CacheInterface::class, ArrayCache::class);
 
-$container->extend(MailerInterface::class, function (MailerInterface $mailer, Container $c) {
-    return new LoggingMailerDecorator($mailer);
+$container->extend(CacheInterface::class, function ($cache, $container) {
+    return new LoggingCache($cache, $container->get(LoggerInterface::class));
 });
 ```
 
 ## Autowiring
 
-The container inspects constructor type-hints and resolves dependencies automatically. No explicit registration is required for concrete classes:
+The container resolves constructor dependencies automatically using reflection when no explicit binding is registered.
 
 ```php
-class OrderService
+class UserRepository
 {
-    public function __construct(
-        private readonly PaymentGateway $payment,
-        private readonly InventoryRepository $inventory,
-    ) {}
+    public function __construct(private DatabaseConnection $db) {}
 }
 
-$service = $container->get(OrderService::class);
-// PaymentGateway and InventoryRepository are resolved automatically
+class UserService
+{
+    public function __construct(private UserRepository $repo) {}
+}
+
+// No bindings needed — the full dependency tree is wired automatically
+$service = $container->get(UserService::class);
 ```
 
-Union-typed parameters are resolved by trying each type in order. Nullable and defaulted parameters fall back gracefully without throwing.
+Union types are supported: the container tries each type in order and uses the first resolvable one. Nullable and defaulted parameters fall back gracefully when a dependency cannot be resolved.
 
 ## Contextual Bindings
 
-Inject different implementations of the same interface depending on which class is requesting it:
+Inject different implementations of the same interface depending on which class is being built.
 
 ```php
 $container->when(OrderController::class)
-    ->needs(LoggerInterface::class)
-    ->give(OrderLogger::class);
+    ->needs(PaymentGatewayInterface::class)
+    ->give(StripeGateway::class);
 
-$container->when(PaymentController::class)
-    ->needs(LoggerInterface::class)
-    ->give(PaymentLogger::class);
-```
+$container->when(CheckoutController::class)
+    ->needs(PaymentGatewayInterface::class)
+    ->give(PayPalGateway::class);
 
-Supply all services tagged with a given tag to a context:
+// Factory closure
+$container->when(ReportService::class)
+    ->needs(StorageInterface::class)
+    ->give(function ($container) {
+        return new S3Storage($container->get(S3Client::class));
+    });
 
-```php
-$container->when(ReportBuilder::class)
-    ->needs(FormatterInterface::class)
-    ->giveTagged('report.formatters');
+// Inject all services tagged with a specific tag
+$container->when(NotificationService::class)
+    ->needs(ChannelInterface::class)
+    ->giveTagged('notification.channels');
 ```
 
 ## Tagged Services
 
-Group related bindings under a shared tag and resolve all of them at once:
+Group multiple bindings under a tag and resolve them all at once.
 
 ```php
-$container->bind(CsvFormatter::class, CsvFormatter::class);
-$container->bind(JsonFormatter::class, JsonFormatter::class);
-$container->bind(XmlFormatter::class, XmlFormatter::class);
+$container->bind(EmailNotifier::class, EmailNotifier::class);
+$container->bind(SmsNotifier::class, SmsNotifier::class);
 
-$container->tag(
-    [CsvFormatter::class, JsonFormatter::class, XmlFormatter::class],
-    'report.formatters'
-);
+$container->tag([EmailNotifier::class, SmsNotifier::class], 'notifiers');
 
-$formatters = $container->tagged('report.formatters');
-// Returns an array of resolved CsvFormatter, JsonFormatter, XmlFormatter instances
+foreach ($container->tagged('notifiers') as $notifier) {
+    $notifier->send($message);
+}
 ```
 
-A single abstract can carry multiple tags:
-
-```php
-$container->tag(AuditLogger::class, ['loggers', 'auditors']);
-```
+`tag()` accepts a single abstract or an array, and a single tag name or an array of tag names.
 
 ## Scoped Bindings
 
-Override bindings within a bounded scope. The original bindings are automatically restored when the callable returns:
+Override bindings for the duration of a callback. The original state is restored automatically, even when an exception is thrown.
 
 ```php
-$result = $container->scoped([
-    LoggerInterface::class => TestLogger::class,
-], function () use ($container, $order) {
-    // OrderService receives TestLogger inside this scope
-    return $container->get(OrderService::class)->process($order);
-});
-// LoggerInterface is back to its original binding here
+$result = $container->scoped(
+    [LoggerInterface::class => NullLogger::class],
+    function ($container) {
+        // Inside here, LoggerInterface resolves to NullLogger
+        return $container->get(SomeService::class)->run();
+    }
+);
+
+// Outside, LoggerInterface still resolves to the original binding
 ```
+
+Bindings in the array can be class name strings, closures, or pre-built object instances.
 
 ## Lazy Proxies
 
-Defer resolution until the first method call. Useful for expensive services that may not be needed on every code path:
+Defer resolution of a service until the proxy is first accessed.
 
 ```php
-$proxy = $container->lazy(ReportGenerator::class);
+$proxy = $container->lazy(ExpensiveAnalyticsService::class);
 
-// ReportGenerator is NOT instantiated yet
-
-$report = $proxy->generate($data);
-// Resolved on the first call, then reused
+// The real service has not been built yet.
+// It is instantiated the first time a method is called on the proxy.
+$proxy->track($event);
 ```
 
-The proxy implements `Denosys\Container\LazyProxy` and transparently forwards all calls to the underlying instance once triggered.
+`lazy()` returns a `LazyProxy` instance backed by `LazyResolutionProxy`.
 
 ## Method Injection
 
-### call()
+### `call()`
 
-Invoke any callable with automatic injection of type-hinted parameters:
+Resolve a callable and inject its typed parameters from the container.
 
 ```php
-$result = $container->call(function (MailerInterface $mailer, string $subject = 'Hello') {
-    return $mailer->send($subject);
+$result = $container->call(function (UserRepository $repo, LoggerInterface $logger) {
+    $users = $repo->findAll();
+    $logger->info('Fetched ' . count($users) . ' users');
+    return $users;
 });
 
-// Object method
-$result = $container->call([$controller, 'index']);
-
-// Pass extra parameters — these override or supplement resolved ones
-$result = $container->call([OrderService::class, 'process'], ['orderId' => 42]);
+// Pass extra parameters to fill primitives or override specific arguments
+$result = $container->call([SomeClass::class, 'handle'], ['id' => 42]);
 ```
 
-### callStatic()
+Any callable form works: closures, `[object, 'method']`, `['ClassName', 'method']`, and named functions.
 
-Call a static method with automatic injection:
+### `callStatic()`
+
+Invoke a static method with injected dependencies.
 
 ```php
-$result = $container->callStatic(ReportGenerator::class, 'buildSummary');
+$result = $container->callStatic(ReportGenerator::class, 'generate', ['format' => 'pdf']);
 ```
 
 ## Decorators and Middleware
 
-### decorate()
-
-Wrap a resolved service. Multiple decorators are applied in descending `$priority` order (higher runs first):
+Both `decorate()` and `middleware()` transform a service instance after it has been resolved, before it is returned to the caller.
 
 ```php
-$container->bind(CacheInterface::class, RedisCache::class);
-
-$container->decorate(CacheInterface::class, function (CacheInterface $cache, Container $c) {
-    return new MetricsCollectingCache($cache);
+// Decorators run in descending priority order
+$container->decorate(LoggerInterface::class, function ($logger, $container) {
+    return new TimingLogger($logger);
 }, priority: 10);
 
-$container->decorate(CacheInterface::class, function (CacheInterface $cache, Container $c) {
-    return new LoggingCache($cache);
+$container->decorate(LoggerInterface::class, function ($logger, $container) {
+    return new ContextLogger($logger, ['app' => 'biyalink']);
 }, priority: 5);
 
-// Chain: RedisCache -> MetricsCollectingCache -> LoggingCache
-$cache = $container->get(CacheInterface::class);
-```
-
-### middleware()
-
-Middleware behaves like a decorator without priority ordering. Applied in registration order, after all `decorate()` layers:
-
-```php
-$container->middleware(RepositoryInterface::class, function (RepositoryInterface $repo, Container $c) {
-    return new CachingRepository($repo, $c->get(CacheInterface::class));
+// Middleware runs in registration order after all decorators
+$container->middleware(CacheInterface::class, function ($cache, $container) {
+    return new MetricsCacheWrapper($cache);
 });
 ```
 
+Higher-priority decorators are applied first. Middleware is appended after the decorator chain.
+
 ## Testing Utilities
 
-### mock()
+### Mocks
 
-Replace a binding with a test double. Mocks take priority over all other bindings and are never decorated:
+Replace a binding with a mock object. The mock takes priority over any registered binding or autowiring.
 
 ```php
-$mockMailer = $this->createMock(MailerInterface::class);
-$mockMailer->expects($this->once())->method('send');
+$mockLogger = $this->createMock(LoggerInterface::class);
+$container->mock(LoggerInterface::class, $mockLogger);
 
-$container->mock(MailerInterface::class, $mockMailer);
-
-$container->get(OrderService::class)->checkout($order);
+// Any resolution of LoggerInterface now returns $mockLogger
+$service = $container->get(SomeService::class);
 ```
 
-### spy()
+### Spies
 
-Wrap a real service instance to track its resolution count and timing without replacing it:
+Wrap a real service to record resolution timing and count.
 
 ```php
-$spy = $container->spy(PaymentGateway::class);
+$spy = $container->spy(UserRepository::class);
 
-// ... exercise code that uses PaymentGateway ...
+$container->get(UserService::class)->findUser(1);
 
-echo $spy->getResolutionCount();         // number of times resolved
-echo $spy->getAverageResolutionTime();   // average ms per resolution
-echo $spy->getTotalResolutionTime();     // total ms across all resolutions
-
-$summary = $spy->getSummary();
-// ['abstract' => ..., 'resolution_count' => ..., 'average_resolution_time' => ...]
+echo $spy->getResolutionCount();       // number of times the service was resolved
+echo $spy->getAverageResolutionTime(); // average time per resolution in ms
+print_r($spy->getSummary());           // full statistics array
 ```
 
 ## Container Validation
 
-Check for misconfigured or unresolvable bindings without instantiating anything:
+Check whether all registered bindings can be resolved.
 
 ```php
 $result = $container->validate();
 
 if (!$result->isValid()) {
     foreach ($result->getIssues() as $issue) {
-        echo $issue->getDescription();
-        // "[error] Cannot resolve 'PaymentGateway' (Abstract: ...) Suggestions: ..."
+        echo $issue->getDescription(); // severity, message, abstract, suggestions
     }
 }
 
-$errors   = $result->getIssuesBySeverity('error');
-$warnings = $result->getIssuesBySeverity('warning');
-
 echo $result->getSummary();
-// "Validation failed. 2 issues found: 1 errors, 1 warnings."
-// or: "Validation passed. No issues found."
+// "Validation passed. No issues found."
+// or "Validation failed. 3 issues found: 2 errors, 1 warning."
 ```
 
-`ValidationIssue` severity levels: `error`, `warning`, `info`.
+Issues carry a severity of `error`, `warning`, or `info`, and may include suggested fixes.
 
 ## Performance Profiling
 
-### getPerformanceMetrics()
+### Metrics
 
-Returns a `PerformanceReport` with timing, cache ratios, and memory stats accumulated since the container was constructed:
+`getPerformanceMetrics()` returns a `PerformanceReport` with aggregated data from every resolution since the container was created.
 
 ```php
 $report = $container->getPerformanceMetrics();
 
-echo $report->getSummary();
-// Performance Score: 95/100
-// Total Resolutions: 342
-// Average Resolution Time: 0.42ms
-// Cache Hit Ratio: 87.4%
-// Peak Memory Usage: 12.30MB
+echo $report->totalResolutions;
+echo $report->averageResolutionTime; // milliseconds
+echo $report->getPerformanceScore(); // 0-100
 
-$score  = $report->getPerformanceScore();      // 0-100
-$slow   = $report->slowestResolutions;         // array<string, float> abstract => ms
-$top    = $report->getMostResolvedServices(5); // top 5 most-resolved services
-$issues = $report->getPerformanceIssues();     // array<string> human-readable warnings
-```
-
-### getResolutionHistory()
-
-Returns a ring-buffer of recent resolution records:
-
-```php
-$history = $container->getResolutionHistory();
-
-foreach ($history as $entry) {
-    printf(
-        "%s resolved in %.2fms (mock: %s)\n",
-        $entry['abstract'],
-        $entry['resolution_time'],
-        $entry['from_mock'] ? 'yes' : 'no'
-    );
+foreach ($report->slowestResolutions as $abstract => $ms) {
+    echo "{$abstract}: {$ms}ms\n";
 }
-// Keys per entry: abstract, resolution_time, from_mock, timestamp, memory_usage
+
+foreach ($report->optimizationSuggestions as $hint) {
+    echo $hint . "\n";
+}
+
+echo $report->getSummary();
 ```
 
-### setResolutionHistoryLimit()
+### Resolution History
 
-The ring-buffer defaults to 1000 entries. Lower it to reduce memory overhead:
+The container maintains a ring-buffer of every resolution event (default limit: 1000 entries).
 
 ```php
+foreach ($container->getResolutionHistory() as $entry) {
+    // Keys: abstract, resolution_time (ms), from_mock, timestamp, memory_usage
+    echo "{$entry['abstract']}: {$entry['resolution_time']}ms\n";
+}
+
+// Shrink the buffer to reduce memory overhead
 $container->setResolutionHistoryLimit(200);
 ```
 
 ## Events
 
-The container dispatches these events internally via `denosyscore/events` throughout its lifecycle. All event classes live in `Denosys\Container\Events`:
+The container dispatches four events via `denosyscore/events` at key lifecycle points. All classes live in the `Denosys\Container\Events\` namespace.
 
-| Event | Dispatched when |
-|---|---|
-| `BindingRegistered` | After `bind()`, `singleton()`, or `instance()` |
-| `ResolutionStarting` | Before a service begins resolving |
-| `ResolutionDone` | After a service is successfully resolved |
-| `ResolutionFailed` | When resolution throws an exception |
+`BindingRegistered` — fired after every call to `bind()` or `singleton()`. Carries `$abstract` (string), `$concrete` (mixed), and `$shared` (bool).
 
-Event shapes:
+`ResolutionStarting` — fired before any service is resolved. Carries `$abstract` (string).
 
-```php
-// BindingRegistered
-$event->abstract;   // string  — the abstract identifier
-$event->concrete;   // mixed   — the concrete or closure
-$event->shared;     // bool    — whether it is a singleton
-$event->tags;       // array<string>
-$event->timestamp;  // ?float  — microtime(true) at dispatch
+`ResolutionDone` — fired after a successful resolution. Carries `$abstract` (string) and `$instance` (the resolved object).
 
-// ResolutionStarting
-$event->abstract;   // ?string
-
-// ResolutionDone
-$event->abstract;   // ?string
-$event->instance;   // mixed  — the resolved object
-
-// ResolutionFailed
-$event->abstract;   // ?string
-$event->exception;  // ?Throwable
-```
-
-Listeners are registered on the `Denosys\Events\Dispatcher` that drives the container. When building a framework integration layer you can wire listeners directly to the listener provider:
-
-```php
-use Denosys\Events\ListenerProvider;
-use Denosys\Container\Events\ResolutionDone;
-use Denosys\Container\Events\ResolutionFailed;
-
-$provider = new ListenerProvider();
-
-$provider->addListener(ResolutionDone::class, function (ResolutionDone $event) {
-    logger()->debug("Resolved: {$event->abstract}");
-});
-
-$provider->addListener(ResolutionFailed::class, function (ResolutionFailed $event) {
-    logger()->error("Resolution failed: {$event->abstract}", [
-        'error' => $event->exception?->getMessage(),
-    ]);
-});
-```
+`ResolutionFailed` — fired when resolution throws. Carries `$abstract` (string) and `$exception` (Throwable).
 
 ## License
 
