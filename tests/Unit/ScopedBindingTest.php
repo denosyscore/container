@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+namespace Denosys\Container\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+use Denosys\Container\Container;
+
+class ScopedService {}
+class OuterService {}
+
+class ScopedBindingTest extends TestCase
+{
+    private Container $container;
+    protected function setUp(): void { $this->container = new Container(); }
+
+    public function testScopedBindingActiveInsideCallback(): void
+    {
+        $result = $this->container->scoped(
+            [ScopedService::class => fn() => new ScopedService()],
+            fn() => $this->container->get(ScopedService::class)
+        );
+        self::assertInstanceOf(ScopedService::class, $result);
+    }
+
+    public function testScopedBindingRemovedAfterCallback(): void
+    {
+        $this->container->scoped(
+            ['scoped.service.test' => fn() => new ScopedService()],
+            fn() => null
+        );
+        self::assertFalse($this->container->has('scoped.service.test'));
+    }
+
+    public function testOuterBindingsUntouched(): void
+    {
+        $this->container->bind(OuterService::class);
+        $this->container->scoped(
+            [ScopedService::class => fn() => new ScopedService()],
+            fn() => null
+        );
+        self::assertTrue($this->container->has(OuterService::class));
+    }
+}

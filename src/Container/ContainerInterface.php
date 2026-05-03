@@ -121,6 +121,13 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function resolveAll(string $abstract): array;
 
     /**
+     * Remove a binding and any resolved instance from the container.
+     *
+     * @param string $abstract
+     */
+    public function removeBinding(string $abstract): void;
+
+    /**
      * Set a callback to resolve deferred providers.
      *
      * The callback is invoked when resolving a service that isn't bound.

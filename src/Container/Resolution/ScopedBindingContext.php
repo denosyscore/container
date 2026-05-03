@@ -253,16 +253,6 @@ public function getActiveScopedBindings(): array
      */
     private function removeScopedBinding(string $abstract, ContainerInterface $container): void
     {
-        // Note: The base Container class doesn't have a method to remove bindings,
-        // so this is a limitation. In a full implementation, you might need to
-        // extend the base container or use reflection to modify private properties.
-        
-        // For now, we'll log this limitation
-        error_log("Warning: Cannot remove scoped binding for '{$abstract}' - base container doesn't support binding removal");
-        
-        // In a production implementation, you might:
-        // 1. Extend the base Container to add removeBinding() method
-        // 2. Use reflection to modify private properties
-        // 3. Keep track of original bindings and restore them explicitly
+        $container->removeBinding($abstract);
     }
 }
