@@ -59,7 +59,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function getAlias(string $abstract): string;
 
     /**
-     * "Extends" an existing abstract identifier in the container.
+     * \"Extends\" an existing abstract identifier in the container.
      *
      * @param string $abstract
      * @param Closure $concrete
