@@ -29,7 +29,9 @@ use Denosys\Container\Decorators\DecoratorChain;
 use Denosys\Container\Exceptions\ContainerResolutionException;
 use Denosys\Container\Exceptions\NotFoundException;
 use Denosys\Container\Exceptions\ContainerException;
+use ReflectionClass;
 use ReflectionException;
+use ReflectionFunction;
 use Closure;
 
 class Container implements
@@ -204,7 +206,7 @@ class Container implements
             $extender = $concrete;
             $originalConcrete = $this->bindings[$abstract]['concrete'];
 
-            $this->bindings[$abstract]['concrete'] = function($container) use ($extender, $originalConcrete) {
+            $this->bindings[$abstract]['concrete'] = function ($container) use ($extender, $originalConcrete) {
                 $originalInstance = $originalConcrete($container);
                 return $extender($originalInstance, $container);
             };
@@ -534,8 +536,8 @@ class Container implements
             $class = is_object($callback[0]) ? get_class($callback[0]) : $callback[0];
             return $class . '::' . $callback[1];
         }
-        if ($callback instanceof \Closure) {
-            $rf = new \ReflectionFunction($callback);
+        if ($callback instanceof Closure) {
+            $rf = new ReflectionFunction($callback);
             return 'Closure@' . $rf->getFileName() . ':' . $rf->getStartLine();
         }
         return 'callable';
@@ -672,13 +674,13 @@ class Container implements
             $dependencies = [];
 
             if (class_exists($abstract)) {
-                $reflection = new \ReflectionClass($abstract);
+                $reflection = new ReflectionClass($abstract);
                 $constructor = $reflection->getConstructor();
 
                 if ($constructor) {
                     foreach ($constructor->getParameters() as $parameter) {
                         $type = $parameter->getType();
-                        if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                        if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                             $dependencies[] = [
                                 'name' => $parameter->getName(),
                                 'type' => $type->getName(),
@@ -812,7 +814,7 @@ class Container implements
 
         if (class_exists($abstract)) {
             try {
-                $reflection = new \ReflectionClass($abstract);
+                $reflection = new ReflectionClass($abstract);
                 if ($reflection->isAbstract()) {
                     $suggestions[] = "'{$abstract}' is abstract - bind it to a concrete implementation";
                 }
