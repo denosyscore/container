@@ -20,8 +20,7 @@ interface IntrospectableContainerInterface
      * Get the dependency graph for a specific abstract.
      *
      * @param string $abstract
-     *
-     * @return array<string, mixed>
+     * @return array{abstract: string, dependencies: array<int, array{name: string, type: string, optional: bool, has_default: bool}>, is_bound: bool, tags: array<string>}|array{abstract: string, error: string, dependencies: array<never>}
      */
     public function getDependencies(string $abstract): array;
 

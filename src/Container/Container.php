@@ -40,16 +40,15 @@ class Container implements
     TestableContainerInterface
 {
     /** @var array<string, mixed> */
-
     private array $bindings = [];
-    /** @var array<string, mixed> */
 
+    /** @var array<string, mixed> */
     private array $instances = [];
-    /** @var array<string, mixed> */
 
+    /** @var array<string, mixed> */
     private array $aliases = [];
-    /** @var array<string, mixed> */
 
+    /** @var array<string, mixed> */
     private array $resolvingStack = [];
 
     private ContextualBindingManager $contextualBindings;
@@ -71,16 +70,21 @@ class Container implements
 
     /**
      * Resolution history for debugging and testing.
+     *
+     * @var array<int, array<string, mixed>>
      */
-    /** @var array<string, mixed> */
-
     private array $resolutionHistory = [];
 
     /**
-     * Service spies for testing.
+     * Maximum number of entries kept in resolutionHistory.
      */
-    /** @var array<string, mixed> */
+    private int $resolutionHistoryLimit = 1000;
 
+    /**
+     * Service spies for testing.
+     *
+     * @var array<string, mixed>
+     */
     private array $spies = [];
 
     /**
@@ -100,15 +104,23 @@ class Container implements
 
     /**
      * Set a callback to resolve deferred providers.
-     * 
+     *
      * The callback is invoked when resolving a service that isn't bound.
      * This allows ServiceProviderBootstrapper to lazy-load deferred providers.
-     * 
+     *
      * @param Closure(string): void $resolver
      */
     public function setDeferredResolver(Closure $resolver): void
     {
         $this->deferredResolver = $resolver;
+    }
+
+    /**
+     * Set the maximum number of entries kept in the resolution history ring-buffer.
+     */
+    public function setResolutionHistoryLimit(int $limit): void
+    {
+        $this->resolutionHistoryLimit = max(1, $limit);
     }
 
     /**
@@ -246,13 +258,11 @@ class Container implements
     }
 
     /**
+     * @param  array<int, mixed> $parameters
+     * @return array<int, mixed>
      * @throws ContainerException|ContainerResolutionException
      */
-    /**
-     * @return array<string, mixed>
-      * @param array<int, mixed> $parameters
-     */
-private function resolveParameters(array $parameters, string $classContext): array
+    private function resolveParameters(array $parameters, string $classContext): array
     {
         $arguments = [];
 
@@ -263,7 +273,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
             if ($type === null) {
                 if ($parameter->isDefaultValueAvailable()) {
                     $arguments[] = $parameter->getDefaultValue();
-
                     continue;
                 }
 
@@ -283,7 +292,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
                     if ($this->isResolvableBinding($abstract) || $this->isInstantiableClass($abstract)) {
                         $arguments[] = $this->get($abstract);
                         $resolved = true;
-
                         break;
                     }
                 }
@@ -294,13 +302,11 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
                 if ($parameter->allowsNull()) {
                     $arguments[] = null;
-
                     continue;
                 }
 
                 if ($parameter->isDefaultValueAvailable()) {
                     $arguments[] = $parameter->getDefaultValue();
-
                     continue;
                 }
 
@@ -313,19 +319,16 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
                     if ($this->isResolvableBinding($abstract) || $this->isInstantiableClass($abstract)) {
                         $arguments[] = $this->get($abstract);
-
                         continue;
                     }
 
                     if ($parameter->allowsNull()) {
                         $arguments[] = null;
-
                         continue;
                     }
 
                     if ($parameter->isDefaultValueAvailable()) {
                         $arguments[] = $parameter->getDefaultValue();
-
                         continue;
                     }
 
@@ -338,7 +341,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
                 if ($parameter->isDefaultValueAvailable()) {
                     $arguments[] = $parameter->getDefaultValue();
-
                     continue;
                 }
 
@@ -370,7 +372,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
         try {
             $class = $this->reflectionCache->getClass($name);
-
             return $class->isInstantiable();
         } catch (ReflectionException) {
             return false;
@@ -399,7 +400,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
     public function get(string $id): mixed
     {
         $startTime = microtime(true);
-        $originalAbstract = $id;
 
         try {
             $this->event->dispatch(new ResolutionStarting($id));
@@ -407,14 +407,12 @@ private function resolveParameters(array $parameters, string $classContext): arr
             if ($this->advancedFeaturesInitialized && $this->mockManager->hasMock($id)) {
                 $instance = $this->mockManager->getMock($id);
                 $this->recordResolution($id, $startTime, true);
-
                 return $instance;
             }
 
             if ($this->advancedFeaturesInitialized && $this->contextualBindings->hasContextualBinding($id)) {
                 $instance = $this->contextualBindings->resolve($id, $this);
                 $this->recordResolution($id, $startTime, false);
-
                 return $instance;
             }
 
@@ -487,7 +485,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
         }
     }
 
-
     public function when(string $concrete): ContextualBindingBuilder
     {
         $this->initializeAdvancedFeatures();
@@ -507,28 +504,42 @@ private function resolveParameters(array $parameters, string $classContext): arr
     }
 
     /**
+     * Describe a callable for use in event dispatching and error messages.
+     */
+    private function describeCallback(callable $callback): string
+    {
+        if (is_string($callback)) {
+            return $callback;
+        }
+        if (is_array($callback)) {
+            $class = is_object($callback[0]) ? get_class($callback[0]) : $callback[0];
+            return $class . '::' . $callback[1];
+        }
+        if ($callback instanceof \Closure) {
+            $rf = new \ReflectionFunction($callback);
+            return 'Closure@' . $rf->getFileName() . ':' . $rf->getStartLine();
+        }
+        return 'callable';
+    }
+
+    /**
      * @throws ContainerResolutionException|Throwable
-      * @param array<int, mixed> $parameters
+     * @param array<int, mixed> $parameters
      */
     public function call(callable $callback, array $parameters = []): mixed
     {
         $this->initializeAdvancedFeatures();
-
         $startTime = microtime(true);
+        $description = $this->describeCallback($callback);
 
         try {
-            $this->event->dispatch(new ResolutionStarting());
-
+            $this->event->dispatch(new ResolutionStarting($description));
             $result = $this->methodInjector->call($callback, $parameters, $this);
-
-            $this->event->dispatch(new ResolutionDone());
-
+            $this->event->dispatch(new ResolutionDone(abstract: $description, instance: $result));
             $this->profiler->recordMethodInjection(microtime(true) - $startTime);
-
             return $result;
         } catch (Throwable $e) {
-            $this->event->dispatch(new ResolutionFailed());
-
+            $this->event->dispatch(new ResolutionFailed(abstract: $description, exception: $e));
             throw $e;
         }
     }
@@ -545,7 +556,6 @@ private function resolveParameters(array $parameters, string $classContext): arr
         try {
             $result = $this->methodInjector->callStatic($class, $method, $parameters, $this);
             $this->profiler->recordMethodInjection(microtime(true) - $startTime);
-
             return $result;
         } catch (Throwable $e) {
             throw new ContainerResolutionException(
@@ -632,7 +642,7 @@ private function resolveParameters(array $parameters, string $classContext): arr
     }
 
     /**
-     * @return array<string>
+     * @return array{abstract: string, dependencies: array<int, array{name: string, type: string, optional: bool, has_default: bool}>, is_bound: bool, tags: array<string>}|array{abstract: string, error: string, dependencies: array<never>}
      */
     public function getDependencies(string $abstract): array
     {
@@ -738,22 +748,26 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
     /**
      * Record a service resolution for performance tracking and debugging.
+     * Operates as a ring-buffer capped at $resolutionHistoryLimit entries.
      */
     private function recordResolution(string $abstract, float $startTime, bool $fromMock): void
     {
-        $resolutionTime = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
+        $resolutionTime = (microtime(true) - $startTime) * 1000;
+
+        if (count($this->resolutionHistory) >= $this->resolutionHistoryLimit) {
+            array_shift($this->resolutionHistory);
+        }
 
         $this->resolutionHistory[] = [
             'abstract' => $abstract,
             'resolution_time' => $resolutionTime,
             'from_mock' => $fromMock,
             'timestamp' => microtime(true),
-            'memory_usage' => memory_get_usage(true)
+            'memory_usage' => memory_get_usage(true),
         ];
 
         $this->profiler->recordResolution($abstract, $resolutionTime);
 
-        // Record in spy if one exists
         if (isset($this->spies[$abstract])) {
             $this->spies[$abstract]->recordResolution($resolutionTime);
         }
@@ -761,7 +775,8 @@ private function resolveParameters(array $parameters, string $classContext): arr
 
     /**
      * Get suggestions for resolution failures.
-      * @return array<string>
+     *
+     * @return array<string>
      */
     private function getSuggestionsForResolutionFailure(string $abstract, Throwable $exception): array
     {
