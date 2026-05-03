@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Denosys\Container\Validation;
 
+use Closure;
+use ReflectionClass;
+use ReflectionFunction;
 use Denosys\Container\Container;
 use Denosys\Container\ValidationResult;
 use Denosys\Container\ValidationIssue;
@@ -12,56 +15,66 @@ use Denosys\Container\ValidationIssue;
  * Container validator for pre-runtime validation.
  *
  * Checks:
- *   - Bindings where the concrete is a string class name that does not exist
- *     are flagged as errors.
- *   - Abstracts that are interfaces bound to themselves (no real concrete) are
- *     flagged as warnings.
+ *   1. Every bound abstract resolves to a real PHP class or interface — flagged as error if not.
+ *   2. Every interface abstract that has no explicit concrete (self-bound) is flagged as a warning.
  */
 class ContainerValidator
 {
     public function validate(Container $container): ValidationResult
     {
         $issues = [];
+        $statistics = [];
 
         try {
             $bindings = $container->getBindings();
-            $statistics = ['total_bindings' => count($bindings)];
+            $statistics['total_bindings'] = count($bindings);
+
+            // Access the private $bindings property to inspect raw concrete closures.
+            // getBindings() exposes metadata only (shared, tags, etc.), not the concrete class name,
+            // so reflection is the only way to introspect what was actually registered.
+            $reflection = new ReflectionClass($container);
+            $bindingsProp = $reflection->getProperty('bindings');
+            $bindingsProp->setAccessible(true);
+            /** @var array<string, array{concrete: Closure, shared: bool}> $rawBindings */
+            $rawBindings = $bindingsProp->getValue($container);
 
             foreach ($bindings as $abstract => $info) {
-                $concreteClass = $info['concrete_class'] ?? null;
-
-                // Check 1: concrete is a named class/interface that doesn't exist.
-                if (
-                    $concreteClass !== null
-                    && !class_exists($concreteClass)
-                    && !interface_exists($concreteClass)
-                ) {
+                // Check 1: Abstract must exist as a real PHP class or interface.
+                if (!class_exists($abstract) && !interface_exists($abstract)) {
                     $issues[] = new ValidationIssue(
                         ValidationIssue::SEVERITY_ERROR,
-                        "Concrete class '{$concreteClass}' bound to '{$abstract}' does not exist.",
+                        "Abstract '{$abstract}' references a non-existent class or interface.",
                         $abstract,
                         [
-                            "Ensure '{$concreteClass}' is defined and autoloaded",
-                            "Check for typos in the class name",
+                            "Ensure '{$abstract}' is defined and autoloaded",
+                            "Check for typos in the class or interface name",
                         ]
                     );
                     continue;
                 }
 
-                // Check 2: abstract is an interface bound to itself — no real implementation.
-                if (
-                    $concreteClass !== null
-                    && $concreteClass === $abstract
-                    && interface_exists($abstract)
-                ) {
-                    $issues[] = new ValidationIssue(
-                        ValidationIssue::SEVERITY_WARNING,
-                        "Interface '{$abstract}' has no concrete implementation registered.",
-                        $abstract,
-                        [
-                            "Bind '{$abstract}' to a concrete class: \$container->bind({$abstract}::class, ConcreteImpl::class)",
-                        ]
-                    );
+                // Check 2: Interface bound to itself — no concrete implementation registered.
+                //
+                // When bind(SomeInterface::class) is called without an explicit concrete,
+                // bind() sets concrete = abstract and wraps it as:
+                //   fn() => $this->resolve($concrete)   where $concrete === $abstract
+                // That closure will fail at runtime because interfaces are not instantiable.
+                if (interface_exists($abstract) && isset($rawBindings[$abstract])) {
+                    $concrete = $rawBindings[$abstract]['concrete'];
+
+                    if ($concrete instanceof Closure) {
+                        $rf = new ReflectionFunction($concrete);
+                        $used = $rf->getClosureUsedVariables();
+
+                        if (isset($used['concrete']) && $used['concrete'] === $abstract) {
+                            $issues[] = new ValidationIssue(
+                                ValidationIssue::SEVERITY_WARNING,
+                                "Interface '{$abstract}' is bound to itself with no concrete implementation.",
+                                $abstract,
+                                ["Bind '{$abstract}' to a concrete class that implements it"]
+                            );
+                        }
+                    }
                 }
             }
 
@@ -80,7 +93,7 @@ class ContainerValidator
                 ['Check container configuration and bindings']
             );
 
-            return new ValidationResult(false, $issues, $statistics ?? []);
+            return new ValidationResult(false, $issues, $statistics);
         }
     }
 }
