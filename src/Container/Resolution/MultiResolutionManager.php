@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Denosys\Container\Resolution;
 
 use Denosys\Container\ContainerInterface;
-use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Manages resolution of multiple implementations for interfaces and abstract classes.
@@ -38,37 +37,10 @@ class MultiResolutionManager
     {
         $implementations = $this->getAllImplementations($abstract, $container);
         $resolved = [];
-        $errors = [];
 
         foreach ($implementations as $implementation) {
-            try {
-                $instance = $container->get($implementation);
-                $resolved[] = $instance;
-            } catch (\Throwable $e) {
-                $errors[] = [
-                    'implementation' => $implementation,
-                    'error' => $e->getMessage()
-                ];
-                
-                // Log the error but continue with other implementations
-                error_log("Failed to resolve implementation '{$implementation}' for '{$abstract}': " . $e->getMessage());
-            }
-        }
-
-        // If no implementations were resolved and we have errors, throw an exception
-        if (empty($resolved) && !empty($errors)) {
-            $errorMessages = array_map(fn($error) => (string) $error['implementation'] . ': ' . (string) $error['error'], $errors);
-            
-            throw new ContainerResolutionException(
-                "Failed to resolve any implementations for '{$abstract}'",
-                $abstract,
-                null,
-                [
-                    'Check that implementations are properly bound',
-                    'Verify that implementation classes exist and are autoloaded',
-                    'Errors: ' . implode(', ', $errorMessages)
-                ]
-            );
+            $instance = $container->get($implementation);
+            $resolved[] = $instance;
         }
 
         return $resolved;
