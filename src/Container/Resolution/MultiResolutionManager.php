@@ -212,16 +212,12 @@ class MultiResolutionManager
 
         // Add tagged implementations if the container supports it
         if (method_exists($container, 'tagged')) {
-            try {
-                $taggedServices = $container->tagged($abstract);
-                foreach ($taggedServices as $service) {
-                    $className = get_class($service);
-                    if (!in_array($className, $implementations, true)) {
-                        $implementations[] = $className;
-                    }
+            $taggedServices = $container->tagged($abstract);
+            foreach ($taggedServices as $service) {
+                $className = get_class($service);
+                if (!in_array($className, $implementations, true)) {
+                    $implementations[] = $className;
                 }
-            } catch (\Throwable $e) {
-                // Ignore errors from tagged resolution
             }
         }
 
