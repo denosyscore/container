@@ -12,10 +12,9 @@ use Denosys\Container\ContainerInterface;
 class DecoratorChain
 {
     /** @var array<string, mixed> */
-
     private array $decorators = [];
-    /** @var array<string, mixed> */
 
+    /** @var array<string, mixed> */
     private array $middleware = [];
 
     public function addDecorator(string $abstract, callable $decorator, int $priority = 0): void
@@ -29,8 +28,8 @@ class DecoratorChain
             'priority' => $priority
         ];
 
-        // Sort by priority (higher priority = executed later)
-        usort($this->decorators[$abstract], fn($a, $b) => $a['priority'] <=> $b['priority']);
+        // Sort by priority descending (higher priority = executed first)
+        usort($this->decorators[$abstract], fn($a, $b) => $b['priority'] <=> $a['priority']);
     }
 
     public function addMiddleware(string $abstract, callable $middleware): void
@@ -48,14 +47,12 @@ class DecoratorChain
 
     public function decorate(string $abstract, mixed $instance, ContainerInterface $container): mixed
     {
-        // Apply decorators
         if (isset($this->decorators[$abstract])) {
             foreach ($this->decorators[$abstract] as $decoratorInfo) {
                 $instance = $decoratorInfo['decorator']($instance, $container);
             }
         }
 
-        // Apply middleware
         if (isset($this->middleware[$abstract])) {
             foreach ($this->middleware[$abstract] as $middleware) {
                 $instance = $middleware($instance, $container);
@@ -66,13 +63,9 @@ class DecoratorChain
     }
 
     /**
-
      * @return array<string, mixed>
-
      */
-
-public function getDecorators(string $abstract): array
-
+    public function getDecorators(string $abstract): array
     {
         return $this->decorators[$abstract] ?? [];
     }
@@ -87,7 +80,6 @@ public function getDecorators(string $abstract): array
 
     public function clearDecorators(string $abstract): void
     {
-        unset($this->decorators[$abstract]);
-        unset($this->middleware[$abstract]);
+        unset($this->decorators[$abstract], $this->middleware[$abstract]);
     }
 }
