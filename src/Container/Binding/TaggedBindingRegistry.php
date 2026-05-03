@@ -44,20 +44,18 @@ class TaggedBindingRegistry
      */
     private function addTag(string $abstract, string $tag): void
     {
-        // Add to tag map
         if (!isset($this->tagMap[$tag])) {
             $this->tagMap[$tag] = [];
         }
-        
+
         if (!in_array($abstract, $this->tagMap[$tag], true)) {
             $this->tagMap[$tag][] = $abstract;
         }
 
-        // Add to service tags
         if (!isset($this->serviceTags[$abstract])) {
             $this->serviceTags[$abstract] = [];
         }
-        
+
         if (!in_array($tag, $this->serviceTags[$abstract], true)) {
             $this->serviceTags[$abstract][] = $tag;
         }
@@ -65,18 +63,19 @@ class TaggedBindingRegistry
 
     /**
      * Get all services tagged with a specific tag.
-     */
-    /**
+     *
      * @return array<string>
      */
-public function getTaggedServices(string $tag): array
+    public function getTaggedServices(string $tag): array
     {
         return $this->tagMap[$tag] ?? [];
     }
 
     /**
      * Resolve all services tagged with a specific tag.
-      * @return array<object>
+     *
+     * @return array<object>
+     * @throws \Throwable
      */
     public function resolveTagged(string $tag, ContainerInterface $container): array
     {
@@ -84,12 +83,7 @@ public function getTaggedServices(string $tag): array
         $abstracts = $this->getTaggedServices($tag);
 
         foreach ($abstracts as $abstract) {
-            try {
-                $services[] = $container->get($abstract);
-            } catch (\Throwable $e) {
-                // Log error but continue with other services
-                error_log("Failed to resolve tagged service '{$abstract}' for tag '{$tag}': " . $e->getMessage());
-            }
+            $services[] = $container->get($abstract);
         }
 
         return $services;
@@ -97,7 +91,8 @@ public function getTaggedServices(string $tag): array
 
     /**
      * Get all tags for a specific service.
-      * @return array<string>
+     *
+     * @return array<string>
      */
     public function getTagsFor(string $abstract): array
     {
@@ -117,27 +112,23 @@ public function getTaggedServices(string $tag): array
      */
     public function removeTag(string $abstract, string $tag): void
     {
-        // Remove from tag map
         if (isset($this->tagMap[$tag])) {
             $key = array_search($abstract, $this->tagMap[$tag], true);
             if ($key !== false) {
                 array_splice($this->tagMap[$tag], $key, 1);
             }
 
-            // Clean up empty tag arrays
             if (empty($this->tagMap[$tag])) {
                 unset($this->tagMap[$tag]);
             }
         }
 
-        // Remove from service tags
         if (isset($this->serviceTags[$abstract])) {
             $key = array_search($tag, $this->serviceTags[$abstract], true);
             if ($key !== false) {
                 array_splice($this->serviceTags[$abstract], $key, 1);
             }
 
-            // Clean up empty service tag arrays
             if (empty($this->serviceTags[$abstract])) {
                 unset($this->serviceTags[$abstract]);
             }
@@ -157,7 +148,8 @@ public function getTaggedServices(string $tag): array
 
     /**
      * Get all registered tags.
-      * @return array<string>
+     *
+     * @return array<string>
      */
     public function getAllTags(): array
     {
@@ -166,7 +158,8 @@ public function getTaggedServices(string $tag): array
 
     /**
      * Get the complete tag map.
-      * @return array<string, array<string>>
+     *
+     * @return array<string, array<string>>
      */
     public function getTagMap(): array
     {
@@ -175,7 +168,8 @@ public function getTaggedServices(string $tag): array
 
     /**
      * Get statistics about tagged services.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getStatistics(): array
     {
