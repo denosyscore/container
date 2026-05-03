@@ -137,12 +137,14 @@ class Container implements
             $concrete = $abstract;
         }
 
+        $concreteClass = null;
         if (!$concrete instanceof Closure) {
-            $concrete = fn() => $this->resolve($concrete);
+            $concreteClass = $concrete;
+            $concrete = fn() => $this->resolve($concreteClass);
         }
 
         unset($this->removedBindings[$abstract]);
-        $this->bindings[$abstract] = ['concrete' => $concrete, 'shared' => $shared];
+        $this->bindings[$abstract] = ['concrete' => $concrete, 'shared' => $shared, 'concrete_class' => $concreteClass];
 
         $this->event->dispatch(new BindingRegistered($abstract, $concrete, $shared));
     }
@@ -649,6 +651,7 @@ class Container implements
             $bindings[$abstract] = [
                 'type' => 'binding',
                 'shared' => $binding['shared'],
+                'concrete_class' => $binding['concrete_class'] ?? null,
                 'tags' => $this->taggedBindings->getTagsFor($abstract),
                 'has_decorators' => $this->decoratorChain->hasDecorators($abstract),
                 'has_contextual' => $this->contextualBindings->hasContextualBinding($abstract)
