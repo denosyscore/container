@@ -137,10 +137,10 @@ class Container implements
             $concrete = $abstract;
         }
 
-        $concreteClass = null;
+        $concreteClass = is_string($concrete) ? $concrete : null;
+
         if (!$concrete instanceof Closure) {
-            $concreteClass = $concrete;
-            $concrete = fn() => $this->resolve($concreteClass);
+            $concrete = fn() => $this->resolve($concrete);
         }
 
         unset($this->removedBindings[$abstract]);
