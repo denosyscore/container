@@ -42,6 +42,13 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function instance(string $abstract, mixed $instance): mixed;
 
     /**
+     * Remove a binding and any resolved instance for the given abstract.
+     *
+     * @param string $abstract
+     */
+    public function removeBinding(string $abstract): void;
+
+    /**
      * Aliases a string to an existing abstract identifier.
      *
      * @param string $alias

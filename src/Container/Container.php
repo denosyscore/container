@@ -183,6 +183,14 @@ class Container implements
     }
 
     /**
+     * Remove a binding and any resolved instance for the given abstract.
+     */
+    public function removeBinding(string $abstract): void
+    {
+        unset($this->bindings[$abstract], $this->instances[$abstract]);
+    }
+
+    /**
      * "Extends" an existing abstract identifier in the container.
      *
      * @throws NotFoundException
