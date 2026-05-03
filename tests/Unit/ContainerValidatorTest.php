@@ -50,7 +50,7 @@ class ContainerValidatorTest extends TestCase
         self::assertFalse($result->hasErrors());
     }
 
-    public function testValidInterfaceBindingPassesWithNoIssues(): void
+    public function testValidInterfaceBindingPassesWithNoErrors(): void
     {
         $container = new Container();
         $container->bind(ValidatorDummyInterface::class, ValidatorDummyImpl::class);
@@ -104,14 +104,14 @@ class ContainerValidatorTest extends TestCase
         self::assertSame(2, $result->getStatistics()['error_count']);
 
         $messages = array_map(fn($i) => $i->message, $result->getIssues());
-        $hasAlpha = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceAlpha'));
-        $hasBeta  = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceBeta'));
+        $hasAlpha  = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceAlpha'));
+        $hasBeta   = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceBeta'));
 
         self::assertTrue($hasAlpha, 'Expected an error message mentioning ServiceAlpha');
         self::assertTrue($hasBeta,  'Expected an error message mentioning ServiceBeta');
     }
 
-    public function testExplicitConcreteNonExistentClassIsFlaggedAsError(): void
+    public function testExplicitNonExistentConcreteIsFlaggedAsError(): void
     {
         $container = new Container();
         $container->bind(ValidatorDummyInterface::class, 'App\\Missing\\ConcreteImpl');
@@ -131,11 +131,11 @@ class ContainerValidatorTest extends TestCase
     public function testSelfBoundInterfaceProducesWarning(): void
     {
         $container = new Container();
-        $container->bind(ValidatorDummyInterface::class);  // no concrete — self-bound
+        $container->bind(ValidatorDummyInterface::class);  // no concrete -- self-bound
 
         $result = $this->validator->validate($container);
 
-        // Warnings don't make the container invalid.
+        // Warnings must not invalidate the container.
         self::assertTrue($result->isValid());
         self::assertTrue($result->hasWarnings());
 
@@ -144,7 +144,7 @@ class ContainerValidatorTest extends TestCase
         self::assertStringContainsString('ValidatorDummyInterface', reset($warnings)->message);
     }
 
-    public function testInterfaceBoundToConcreteProducesNoWarning(): void
+    public function testInterfaceBoundToConcreteProducesNoSelfBindWarning(): void
     {
         $container = new Container();
         $container->bind(ValidatorDummyInterface::class, ValidatorDummyImpl::class);
@@ -154,6 +154,24 @@ class ContainerValidatorTest extends TestCase
 
         self::assertTrue($result->isValid());
         self::assertFalse($result->hasWarnings());
+    }
+
+    public function testClosureInterfaceBindingProducesNoFalsePositiveWarning(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorDummyInterface::class, fn() => new ValidatorDummyImpl());
+
+        $result = $this->validator->validate($container);
+
+        self::assertTrue($result->isValid());
+        self::assertFalse($result->hasErrors());
+        // A Closure binding for an interface is intentional -- must not warn.
+        $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
+        $selfBindWarnings = array_filter(
+            $warnings,
+            fn($w) => str_contains($w->message, 'no concrete implementation')
+        );
+        self::assertEmpty($selfBindWarnings);
     }
 
     // -----------------------------------------------------------------------
@@ -168,7 +186,8 @@ class ContainerValidatorTest extends TestCase
 
         $result = $this->validator->validate($container);
 
-        self::assertTrue($result->isValid());  // warnings don't fail validation
+        // Warnings do not invalidate.
+        self::assertTrue($result->isValid());
         self::assertTrue($result->hasWarnings());
 
         $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
@@ -180,7 +199,7 @@ class ContainerValidatorTest extends TestCase
     // Statistics
     // -----------------------------------------------------------------------
 
-    public function testStatisticsReflectBindingCount(): void
+    public function testStatisticsReflectBindingAndIssueCount(): void
     {
         $container = new Container();
         $container->bind(ValidatorServiceNoDeps::class);
@@ -189,5 +208,7 @@ class ContainerValidatorTest extends TestCase
         $result = $this->validator->validate($container);
 
         self::assertSame(2, $result->getStatistics()['total_bindings']);
+        self::assertSame(0, $result->getStatistics()['error_count']);
+        self::assertSame(0, $result->getStatistics()['warning_count']);
     }
 }

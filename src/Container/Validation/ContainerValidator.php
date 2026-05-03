@@ -54,7 +54,7 @@ class ContainerValidator
 
                 // Check 2: if the abstract is an interface but has no real concrete registered
                 // (i.e. it was bound to itself or without any concrete), flag as a warning.
-                if (interface_exists($abstract) && ($concreteClass === null || $concreteClass === $abstract)) {
+                if (interface_exists($abstract) && $concreteClass !== null && $concreteClass === $abstract) {
                     $issues[] = new ValidationIssue(
                         ValidationIssue::SEVERITY_WARNING,
                         "Interface " . $abstract . " has no concrete implementation registered.",
