@@ -12,7 +12,7 @@ use Denosys\Container\ContainerInterface;
  * Analyzes service resolution patterns and optimizes resolution paths
  * for frequently accessed services to improve overall performance.
  *
- * @internal Not wired into Container — retained for future use only.
+ * @internal Not wired into Container. For future use only.
  */
 class ResolutionPathOptimizer
 {
