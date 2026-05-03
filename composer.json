@@ -1,7 +1,15 @@
 {
   "name": "denosyscore/container",
-  "description": "Dependency injection container and tooling",
+  "description": "PSR-11 compliant dependency injection container with autowiring, contextual bindings, and service decorators for PHP 8.2+",
   "type": "library",
+  "keywords": [
+    "dependency-injection",
+    "container",
+    "psr-11",
+    "autowiring",
+    "di-container",
+    "ioc"
+  ],
   "license": "MIT",
   "require": {
     "php": "^8.2",
