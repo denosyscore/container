@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Denosys\Container;
 
 use Throwable;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionFunction;
 use ReflectionUnionType;
 use ReflectionNamedType;
 use Denosys\Events\Dispatcher;
@@ -29,9 +32,6 @@ use Denosys\Container\Decorators\DecoratorChain;
 use Denosys\Container\Exceptions\ContainerResolutionException;
 use Denosys\Container\Exceptions\NotFoundException;
 use Denosys\Container\Exceptions\ContainerException;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionFunction;
 use Closure;
 
 class Container implements

@@ -8,7 +8,9 @@
     "psr-11",
     "autowiring",
     "di-container",
-    "ioc"
+    "ioc",
+    "service-container",
+    "php"
   ],
   "license": "MIT",
   "require": {
