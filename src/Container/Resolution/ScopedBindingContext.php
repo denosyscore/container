@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Denosys\Container\Resolution;
 
+use Closure;
+use Throwable;
 use Denosys\Container\ContainerInterface;
 use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Manages scoped binding contexts for temporary binding overrides.
- * 
+ *
  * Allows temporary binding overrides that are automatically restored
  * after the scoped operation completes, enabling isolated execution contexts.
  */
@@ -18,15 +20,11 @@ class ScopedBindingContext
     /**
      * @var array<array<string, mixed>> Stack of scoped binding contexts
      */
-    /** @var array<string, mixed> */
-
     private array $scopeStack = [];
 
     /**
      * @var array<string, mixed> Currently active scoped bindings
      */
-    /** @var array<string, mixed> */
-
     private array $activeScopedBindings = [];
 
     /**
@@ -36,7 +34,8 @@ class ScopedBindingContext
 
     /**
      * Execute a callback with scoped bindings that are restored afterwards.
-      * @param array<int|string, mixed> $bindings
+     *
+     * @param array<int|string, mixed> $bindings
      */
     public function scoped(array $bindings, callable $callback, ContainerInterface $container): mixed
     {
@@ -45,7 +44,7 @@ class ScopedBindingContext
         try {
             // Execute the callback in the scoped context
             $result = $callback($container);
-            
+
             return $result;
         } finally {
             // Always restore the previous scope, even if an exception occurred
@@ -55,7 +54,8 @@ class ScopedBindingContext
 
     /**
      * Push a new scope with the given bindings.
-      * @param array<int|string, mixed> $bindings
+     *
+     * @param array<int|string, mixed> $bindings
      */
     public function pushScope(array $bindings, ContainerInterface $container): void
     {
@@ -117,11 +117,10 @@ class ScopedBindingContext
 
     /**
      * Get the currently active scoped bindings.
-     */
-    /**
+     *
      * @return array<string, mixed>
      */
-public function getActiveScopedBindings(): array
+    public function getActiveScopedBindings(): array
     {
         return $this->activeScopedBindings;
     }
@@ -159,7 +158,8 @@ public function getActiveScopedBindings(): array
 
     /**
      * Get statistics about the scoped context.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getStatistics(): array
     {
@@ -174,7 +174,8 @@ public function getActiveScopedBindings(): array
 
     /**
      * Apply bindings to the container.
-      * @param array<int|string, mixed> $bindings
+     *
+     * @param array<int|string, mixed> $bindings
      */
     private function applyBindings(array $bindings, ContainerInterface $container): void
     {
@@ -189,7 +190,7 @@ public function getActiveScopedBindings(): array
     private function applySingleBinding(string $abstract, mixed $concrete, ContainerInterface $container): void
     {
         try {
-            if ($concrete instanceof \Closure) {
+            if ($concrete instanceof Closure) {
                 // Bind as a closure
                 $container->bind($abstract, $concrete);
             } elseif (is_string($concrete)) {
@@ -209,7 +210,7 @@ public function getActiveScopedBindings(): array
                     ]
                 );
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new ContainerResolutionException(
                 "Failed to apply scoped binding for '{$abstract}': " . $e->getMessage(),
                 $abstract,
@@ -226,8 +227,9 @@ public function getActiveScopedBindings(): array
 
     /**
      * Restore bindings when popping a scope.
-      * @param array<string, mixed> $currentBindings
-      * @param array<string, mixed> $previousBindings
+     *
+     * @param array<string, mixed> $currentBindings
+     * @param array<string, mixed> $previousBindings
      */
     private function restoreBindings(array $currentBindings, array $previousBindings, ContainerInterface $container): void
     {
