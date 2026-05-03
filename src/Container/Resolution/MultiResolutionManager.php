@@ -39,8 +39,7 @@ class MultiResolutionManager
         $resolved = [];
 
         foreach ($implementations as $implementation) {
-            $instance = $container->get($implementation);
-            $resolved[] = $instance;
+            $resolved[] = $container->get($implementation);
         }
 
         return $resolved;
