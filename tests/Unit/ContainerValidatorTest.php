@@ -9,71 +9,185 @@ use Denosys\Container\Container;
 use Denosys\Container\ValidationIssue;
 use Denosys\Container\Validation\ContainerValidator;
 
-// Fixtures — prefixed to avoid collisions with other test files in the same namespace.
-class ValidatorTestService {}
-interface ValidatorTestInterface {}
-class ValidatorTestConcreteImpl implements ValidatorTestInterface {}
+// ---------------------------------------------------------------------------
+// Test fixtures
+// ---------------------------------------------------------------------------
+interface ValidatorDummyInterface {}
+
+class ValidatorDummyImpl implements ValidatorDummyInterface {}
+
+class ValidatorServiceNoDeps {}
+
+class ValidatorServiceWithInterfaceDep
+{
+    public function __construct(public readonly ValidatorDummyInterface $dep) {}
+}
+
+// ---------------------------------------------------------------------------
 
 class ContainerValidatorTest extends TestCase
 {
-    private Container $container;
     private ContainerValidator $validator;
 
     protected function setUp(): void
     {
-        $this->container = new Container();
         $this->validator = new ContainerValidator();
     }
 
+    // -----------------------------------------------------------------------
+    // Valid container
+    // -----------------------------------------------------------------------
+
     public function testValidContainerPassesWithNoIssues(): void
     {
-        $this->container->bind(ValidatorTestService::class);
-        $result = $this->validator->validate($this->container);
+        $container = new Container();
+        $container->bind(ValidatorServiceNoDeps::class);
+
+        $result = $this->validator->validate($container);
 
         self::assertTrue($result->isValid());
-        self::assertEmpty($result->getIssues());
+        self::assertCount(0, $result->getIssues());
+        self::assertFalse($result->hasErrors());
     }
 
-    public function testBindingToNonExistentClassIsError(): void
+    public function testValidInterfaceBindingPassesWithNoIssues(): void
     {
-        $this->container->bind('SomeAbstract', 'Acme\\Ghost\\ClassDoesNotExist');
-        $result = $this->validator->validate($this->container);
+        $container = new Container();
+        $container->bind(ValidatorDummyInterface::class, ValidatorDummyImpl::class);
 
-        self::assertFalse($result->isValid());
-        self::assertTrue($result->hasErrors());
-    }
-
-    public function testIssueCountAndMessage(): void
-    {
-        $this->container->bind('AnotherAbstract', 'Ghost\\NoSuch\\Implementation');
-        $result = $this->validator->validate($this->container);
-
-        self::assertCount(1, $result->getIssues());
-        $issue = $result->getIssues()[0];
-        self::assertSame(ValidationIssue::SEVERITY_ERROR, $issue->severity);
-        self::assertStringContainsString('Ghost\\NoSuch\\Implementation', $issue->message);
-    }
-
-    public function testInterfaceWithSelfBindingIsWarning(): void
-    {
-        // bind(Interface::class) with no concrete — defaults to binding the interface to itself.
-        $this->container->bind(ValidatorTestInterface::class);
-        $result = $this->validator->validate($this->container);
-
-        self::assertTrue($result->hasWarnings());
-        $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
-        self::assertNotEmpty($warnings);
-        // A self-bound interface produces only a warning, not an error — container is still "valid".
-        self::assertTrue($result->isValid());
-    }
-
-    public function testInterfaceBoundToConcreteIsValid(): void
-    {
-        $this->container->bind(ValidatorTestInterface::class, ValidatorTestConcreteImpl::class);
-        $result = $this->validator->validate($this->container);
+        $result = $this->validator->validate($container);
 
         self::assertTrue($result->isValid());
         self::assertFalse($result->hasErrors());
+    }
+
+    public function testClosureBindingIsNotFlaggedAsError(): void
+    {
+        $container = new Container();
+        $container->bind('some.service', fn() => new ValidatorServiceNoDeps());
+
+        $result = $this->validator->validate($container);
+
+        self::assertTrue($result->isValid());
+        self::assertFalse($result->hasErrors());
+    }
+
+    // -----------------------------------------------------------------------
+    // Error: binding to non-existent class
+    // -----------------------------------------------------------------------
+
+    public function testBindingToNonExistentClassIsFlaggedAsError(): void
+    {
+        $container = new Container();
+        $container->bind('App\\NonExistent\\MissingService');
+
+        $result = $this->validator->validate($container);
+
+        self::assertFalse($result->isValid());
+        self::assertTrue($result->hasErrors());
+
+        $errors = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_ERROR);
+        self::assertCount(1, $errors);
+        self::assertStringContainsString('MissingService', reset($errors)->message);
+    }
+
+    public function testResultHasCorrectIssueCountAndMessage(): void
+    {
+        $container = new Container();
+        $container->bind('App\\Missing\\ServiceAlpha');
+        $container->bind('App\\Missing\\ServiceBeta');
+
+        $result = $this->validator->validate($container);
+
+        self::assertFalse($result->isValid());
+        self::assertCount(2, $result->getIssues());
+        self::assertSame(2, $result->getStatistics()['error_count']);
+
+        $messages = array_map(fn($i) => $i->message, $result->getIssues());
+        $hasAlpha = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceAlpha'));
+        $hasBeta  = (bool) array_filter($messages, fn($m) => str_contains($m, 'ServiceBeta'));
+
+        self::assertTrue($hasAlpha, 'Expected an error message mentioning ServiceAlpha');
+        self::assertTrue($hasBeta,  'Expected an error message mentioning ServiceBeta');
+    }
+
+    public function testExplicitConcreteNonExistentClassIsFlaggedAsError(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorDummyInterface::class, 'App\\Missing\\ConcreteImpl');
+
+        $result = $this->validator->validate($container);
+
+        self::assertFalse($result->isValid());
+        $errors = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_ERROR);
+        self::assertNotEmpty($errors);
+        self::assertStringContainsString('ConcreteImpl', reset($errors)->message);
+    }
+
+    // -----------------------------------------------------------------------
+    // Warning: interface self-bound with no concrete
+    // -----------------------------------------------------------------------
+
+    public function testSelfBoundInterfaceProducesWarning(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorDummyInterface::class);  // no concrete — self-bound
+
+        $result = $this->validator->validate($container);
+
+        // Warnings don't make the container invalid.
+        self::assertTrue($result->isValid());
+        self::assertTrue($result->hasWarnings());
+
+        $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
+        self::assertNotEmpty($warnings);
+        self::assertStringContainsString('ValidatorDummyInterface', reset($warnings)->message);
+    }
+
+    public function testInterfaceBoundToConcreteProducesNoWarning(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorDummyInterface::class, ValidatorDummyImpl::class);
+        $container->bind(ValidatorServiceWithInterfaceDep::class);
+
+        $result = $this->validator->validate($container);
+
+        self::assertTrue($result->isValid());
         self::assertFalse($result->hasWarnings());
+    }
+
+    // -----------------------------------------------------------------------
+    // Warning: interface constructor dep not registered
+    // -----------------------------------------------------------------------
+
+    public function testUnboundInterfaceDepProducesWarning(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorServiceWithInterfaceDep::class);
+        // ValidatorDummyInterface is NOT bound
+
+        $result = $this->validator->validate($container);
+
+        self::assertTrue($result->isValid());  // warnings don't fail validation
+        self::assertTrue($result->hasWarnings());
+
+        $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
+        self::assertNotEmpty($warnings);
+        self::assertStringContainsString('ValidatorDummyInterface', reset($warnings)->message);
+    }
+
+    // -----------------------------------------------------------------------
+    // Statistics
+    // -----------------------------------------------------------------------
+
+    public function testStatisticsReflectBindingCount(): void
+    {
+        $container = new Container();
+        $container->bind(ValidatorServiceNoDeps::class);
+        $container->bind(ValidatorDummyImpl::class);
+
+        $result = $this->validator->validate($container);
+
+        self::assertSame(2, $result->getStatistics()['total_bindings']);
     }
 }
