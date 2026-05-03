@@ -10,6 +10,10 @@ use Denosys\Container\ValidationIssue;
 
 /**
  * Container validator for pre-runtime validation.
+ *
+ * Checks each registered binding for:
+ * - Concrete class names that do not exist (error)
+ * - Interfaces bound only to themselves with no real implementation (warning)
  */
 class ContainerValidator
 {
@@ -21,23 +25,52 @@ class ContainerValidator
         try {
             $bindings = $container->getBindings();
             $statistics['total_bindings'] = count($bindings);
-            
-            // For now, just return a basic validation result
-            // In a full implementation, this would check for circular dependencies,
-            // missing bindings, etc.
-            
-            $isValid = empty($issues);
-            
+
+            foreach ($bindings as $abstract => $binding) {
+                $concreteClass = $binding['concrete_class'] ?? null;
+
+                // Check 1: if the concrete is a string class name, verify it actually exists.
+                if (
+                    $concreteClass !== null
+                    && !class_exists($concreteClass)
+                    && !interface_exists($concreteClass)
+                ) {
+                    $issues[] = new ValidationIssue(
+                        ValidationIssue::SEVERITY_ERROR,
+                        "Concrete class '{$concreteClass}' bound to '{$abstract}' does not exist.",
+                        $abstract,
+                        [
+                            "Ensure '{$concreteClass}' is properly defined and autoloaded.",
+                            "Check for typos in the class name or namespace.",
+                        ]
+                    );
+                }
+
+                // Check 2: if the abstract is an interface but has no real concrete registered
+                // (i.e. it was bound to itself or without any concrete), flag as a warning.
+                if (interface_exists($abstract) && ($concreteClass === null || $concreteClass === $abstract)) {
+                    $issues[] = new ValidationIssue(
+                        ValidationIssue::SEVERITY_WARNING,
+                        "Interface '{$abstract}' has no concrete implementation registered.",
+                        $abstract,
+                        ["Bind '{$abstract}' to a concrete class using bind() or singleton()."]
+                    );
+                }
+            }
+
+            // Valid unless there are error-level issues (warnings are allowed).
+            $isValid = empty(array_filter($issues, fn(ValidationIssue $i) => $i->isError()));
+
             return new ValidationResult($isValid, $issues, $statistics);
-            
+
         } catch (\Throwable $e) {
             $issues[] = new ValidationIssue(
                 ValidationIssue::SEVERITY_ERROR,
                 'Failed to validate container: ' . $e->getMessage(),
                 null,
-                ['Check container configuration and bindings']
+                ['Check container configuration and bindings.']
             );
-            
+
             return new ValidationResult(false, $issues, $statistics);
         }
     }
