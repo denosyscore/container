@@ -6,6 +6,8 @@ namespace Denosys\Container\Events;
 
 /**
  * Container event types and event classes.
+ *
+ * @internal Not wired into Container — retained for future use only.
  */
 class ContainerEvents
 {

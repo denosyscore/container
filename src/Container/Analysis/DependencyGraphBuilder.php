@@ -9,10 +9,12 @@ use Denosys\Container\IntrospectableContainerInterface;
 
 /**
  * Builds and analyzes dependency graphs for container services.
- * 
+ *
  * Provides visualization and analysis capabilities for understanding
  * service relationships, detecting circular dependencies, and optimizing
  * container configuration.
+ *
+ * @internal Not wired into Container — retained for future use only.
  */
 class DependencyGraphBuilder
 {
