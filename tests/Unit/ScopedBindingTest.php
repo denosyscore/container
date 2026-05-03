@@ -11,11 +11,7 @@ class OuterService {}
 class ScopedBindingTest extends TestCase
 {
     private Container $container;
-
-    protected function setUp(): void
-    {
-        $this->container = new Container();
-    }
+    protected function setUp(): void { $this->container = new Container(); }
 
     public function testScopedBindingActiveInsideCallback(): void
     {
@@ -29,13 +25,10 @@ class ScopedBindingTest extends TestCase
     public function testScopedBindingRemovedAfterCallback(): void
     {
         $this->container->scoped(
-            [ScopedService::class => fn() => new ScopedService()],
+            ['scoped.service.test' => fn() => new ScopedService()],
             fn() => null
         );
-        // has() returns true for any existing class via class_exists(),
-        // so we check the explicit bindings registry instead.
-        $bindings = $this->container->getBindings();
-        self::assertArrayNotHasKey(ScopedService::class, $bindings);
+        self::assertFalse($this->container->has('scoped.service.test'));
     }
 
     public function testOuterBindingsUntouched(): void

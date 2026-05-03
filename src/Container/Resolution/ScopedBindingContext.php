@@ -9,7 +9,7 @@ use Denosys\Container\Exceptions\ContainerResolutionException;
 
 /**
  * Manages scoped binding contexts for temporary binding overrides.
- *
+ * 
  * Allows temporary binding overrides that are automatically restored
  * after the scoped operation completes, enabling isolated execution contexts.
  */
@@ -18,11 +18,15 @@ class ScopedBindingContext
     /**
      * @var array<array<string, mixed>> Stack of scoped binding contexts
      */
+    /** @var array<string, mixed> */
+
     private array $scopeStack = [];
 
     /**
      * @var array<string, mixed> Currently active scoped bindings
      */
+    /** @var array<string, mixed> */
+
     private array $activeScopedBindings = [];
 
     /**
@@ -32,36 +36,39 @@ class ScopedBindingContext
 
     /**
      * Execute a callback with scoped bindings that are restored afterwards.
-     *
-     * @param array<int|string, mixed> $bindings
+      * @param array<int|string, mixed> $bindings
      */
     public function scoped(array $bindings, callable $callback, ContainerInterface $container): mixed
     {
         $this->pushScope($bindings, $container);
 
         try {
+            // Execute the callback in the scoped context
             $result = $callback($container);
-
+            
             return $result;
         } finally {
+            // Always restore the previous scope, even if an exception occurred
             $this->popScope($container);
         }
     }
 
     /**
      * Push a new scope with the given bindings.
-     *
-     * @param array<int|string, mixed> $bindings
+      * @param array<int|string, mixed> $bindings
      */
     public function pushScope(array $bindings, ContainerInterface $container): void
     {
         $this->scopeDepth++;
 
+        // Store the current state
         $previousBindings = $this->activeScopedBindings;
         $this->scopeStack[] = $previousBindings;
 
+        // Apply new bindings
         $this->activeScopedBindings = array_merge($this->activeScopedBindings, $bindings);
 
+        // Apply the bindings to the container
         $this->applyBindings($bindings, $container);
     }
 
@@ -81,11 +88,14 @@ class ScopedBindingContext
 
         $this->scopeDepth--;
 
+        // Get the current bindings to restore
         $currentBindings = $this->activeScopedBindings;
 
+        // Restore the previous scope
         $previousBindings = array_pop($this->scopeStack);
         $this->activeScopedBindings = $previousBindings;
 
+        // Calculate which bindings need to be restored or removed
         $this->restoreBindings($currentBindings, $previousBindings, $container);
     }
 
@@ -107,10 +117,11 @@ class ScopedBindingContext
 
     /**
      * Get the currently active scoped bindings.
-     *
+     */
+    /**
      * @return array<string, mixed>
      */
-    public function getActiveScopedBindings(): array
+public function getActiveScopedBindings(): array
     {
         return $this->activeScopedBindings;
     }
@@ -136,6 +147,7 @@ class ScopedBindingContext
      */
     public function clearScopes(ContainerInterface $container): void
     {
+        // Restore original bindings for all currently scoped abstracts
         foreach (array_keys($this->activeScopedBindings) as $abstract) {
             $this->removeScopedBinding($abstract, $container);
         }
@@ -147,8 +159,7 @@ class ScopedBindingContext
 
     /**
      * Get statistics about the scoped context.
-     *
-     * @return array<string, mixed>
+      * @return array<string, mixed>
      */
     public function getStatistics(): array
     {
@@ -163,8 +174,7 @@ class ScopedBindingContext
 
     /**
      * Apply bindings to the container.
-     *
-     * @param array<int|string, mixed> $bindings
+      * @param array<int|string, mixed> $bindings
      */
     private function applyBindings(array $bindings, ContainerInterface $container): void
     {
@@ -180,10 +190,13 @@ class ScopedBindingContext
     {
         try {
             if ($concrete instanceof \Closure) {
+                // Bind as a closure
                 $container->bind($abstract, $concrete);
             } elseif (is_string($concrete)) {
+                // Bind as a class name
                 $container->bind($abstract, $concrete);
             } elseif (is_object($concrete)) {
+                // Bind as an instance
                 $container->instance($abstract, $concrete);
             } else {
                 throw new ContainerResolutionException(
@@ -213,20 +226,23 @@ class ScopedBindingContext
 
     /**
      * Restore bindings when popping a scope.
-     *
-     * @param array<string, mixed> $currentBindings
-     * @param array<string, mixed> $previousBindings
+      * @param array<string, mixed> $currentBindings
+      * @param array<string, mixed> $previousBindings
      */
     private function restoreBindings(array $currentBindings, array $previousBindings, ContainerInterface $container): void
     {
+        // Find bindings that need to be removed (were added in this scope)
         foreach ($currentBindings as $abstract => $concrete) {
             if (!array_key_exists($abstract, $previousBindings)) {
+                // This binding was added in the current scope, remove it
                 $this->removeScopedBinding($abstract, $container);
             }
         }
 
+        // Find bindings that need to be restored (were overridden in this scope)
         foreach ($previousBindings as $abstract => $concrete) {
             if (!array_key_exists($abstract, $currentBindings) || $currentBindings[$abstract] !== $concrete) {
+                // This binding was different or removed, restore it
                 $this->applySingleBinding($abstract, $concrete, $container);
             }
         }

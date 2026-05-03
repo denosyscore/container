@@ -51,6 +51,9 @@ class Container implements
     /** @var array<string, mixed> */
     private array $resolvingStack = [];
 
+    /** @var array<string, bool> */
+    private array $removedBindings = [];
+
     private ContextualBindingManager $contextualBindings;
     private TaggedBindingRegistry $taggedBindings;
     private MethodInjector $methodInjector;
@@ -138,6 +141,7 @@ class Container implements
             $concrete = fn() => $this->resolve($concrete);
         }
 
+        unset($this->removedBindings[$abstract]);
         $this->bindings[$abstract] = ['concrete' => $concrete, 'shared' => $shared];
 
         $this->event->dispatch(new BindingRegistered($abstract, $concrete, $shared));
@@ -177,17 +181,10 @@ class Container implements
         }
 
         $this->dropStaleInstances($abstract);
+        unset($this->removedBindings[$abstract]);
         $this->instances[$abstract] = $instance;
 
         return $instance;
-    }
-
-    /**
-     * Remove a binding and any resolved instance for the given abstract.
-     */
-    public function removeBinding(string $abstract): void
-    {
-        unset($this->bindings[$abstract], $this->instances[$abstract]);
     }
 
     /**
@@ -220,6 +217,9 @@ class Container implements
     public function has(string $id): bool
     {
         $id = $this->aliases[$id] ?? $id;
+        if (isset($this->removedBindings[$id])) {
+            return false;
+        }
         return isset($this->bindings[$id]) || isset($this->instances[$id]) || class_exists($id);
     }
 
@@ -229,6 +229,15 @@ class Container implements
     public function getAlias(string $abstract): string
     {
         return $this->aliases[$abstract] ?? $abstract;
+    }
+
+    /**
+     * Remove a binding and any resolved instance from the container.
+     */
+    public function removeBinding(string $abstract): void
+    {
+        unset($this->bindings[$abstract], $this->instances[$abstract]);
+        $this->removedBindings[$abstract] = true;
     }
 
     /**
