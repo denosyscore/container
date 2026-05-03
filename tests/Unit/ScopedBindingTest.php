@@ -25,10 +25,10 @@ class ScopedBindingTest extends TestCase
     public function testScopedBindingRemovedAfterCallback(): void
     {
         $this->container->scoped(
-            ['scoped.service.test' => fn() => new ScopedService()],
+            [ScopedService::class => fn() => new ScopedService()],
             fn() => null
         );
-        self::assertFalse($this->container->has('scoped.service.test'));
+        self::assertFalse($this->container->has(ScopedService::class));
     }
 
     public function testOuterBindingsUntouched(): void
