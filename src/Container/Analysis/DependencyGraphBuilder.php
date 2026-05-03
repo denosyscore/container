@@ -14,7 +14,7 @@ use Denosys\Container\IntrospectableContainerInterface;
  * service relationships, detecting circular dependencies, and optimizing
  * container configuration.
  *
- * @internal Not wired into Container — retained for future use only.
+ * @internal Not wired into Container. For future use only.
  */
 class DependencyGraphBuilder
 {

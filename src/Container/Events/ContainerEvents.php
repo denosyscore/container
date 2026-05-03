@@ -7,7 +7,7 @@ namespace Denosys\Container\Events;
 /**
  * Container event types and event classes.
  *
- * @internal Not wired into Container — retained for future use only.
+ * @internal Not wired into Container. For future use only.
  */
 class ContainerEvents
 {
@@ -26,6 +26,8 @@ class ContainerEvents
 
 /**
  * Base container event.
+ *
+ * @internal Not wired into Container. For future use only.
  */
 abstract class ContainerEvent
 {
@@ -41,6 +43,8 @@ abstract class ContainerEvent
 
 /**
  * Service resolution event.
+ *
+ * @internal Not wired into Container. For future use only.
  */
 class ResolutionEvent extends ContainerEvent
 {
@@ -57,6 +61,8 @@ class ResolutionEvent extends ContainerEvent
 
 /**
  * Binding registration event.
+ *
+ * @internal Not wired into Container. For future use only.
  */
 class BindingEvent extends ContainerEvent
 {
@@ -87,6 +93,7 @@ class BindingEvent extends ContainerEvent
  * Method injection event.
  *
  * @property-read mixed $callback
+ * @internal Not wired into Container. For future use only.
  */
 class MethodInjectionEvent extends ContainerEvent
 {
