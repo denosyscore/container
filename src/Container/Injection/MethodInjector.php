@@ -19,38 +19,34 @@ class MethodInjector
 
     /**
      * Call a method with automatic dependency injection.
-      * @param array<int, mixed> $parameters
+     *
+     * @param array<int|string, mixed> $parameters
      */
     public function call(callable $callback, array $parameters, ContainerInterface $container): mixed
     {
         if (is_array($callback) && count($callback) === 2) {
             [$object, $method] = $callback;
-            
+
             if (is_string($object)) {
-                // Static method call
                 return $this->callStatic($object, $method, $parameters, $container);
             }
-            
-            // Instance method call
+
             return $this->callInstanceMethod($object, $method, $parameters, $container);
         }
-        
+
         if (is_string($callback) && str_contains($callback, '::')) {
-            // Static method call in string format
             [$class, $method] = explode('::', $callback, 2);
             return $this->callStatic($class, $method, $parameters, $container);
         }
-        
+
         if (is_string($callback) && function_exists($callback)) {
-            // Function call
             return $this->callFunction($callback, $parameters, $container);
         }
-        
+
         if ($callback instanceof \Closure) {
-            // Closure call
             return $this->callClosure($callback, $parameters, $container);
         }
-        
+
         throw new ContainerResolutionException(
             'Invalid callback provided to method injector',
             null,
@@ -61,14 +57,15 @@ class MethodInjector
 
     /**
      * Call a static method with dependency injection.
-      * @param array<int, mixed> $parameters
+     *
+     * @param array<int|string, mixed> $parameters
      */
     public function callStatic(string $class, string $method, array $parameters, ContainerInterface $container): mixed
     {
         try {
             $methodParams = $this->reflectionCache->getMethodParameters($class, $method);
             $resolvedParams = $this->resolveMethodParameters($methodParams, $parameters, $container);
-            
+
             return $class::$method(...$resolvedParams);
         } catch (\Throwable $e) {
             throw new ContainerResolutionException(
@@ -86,17 +83,16 @@ class MethodInjector
     }
 
     /**
-     * Call an instance method with dependency injection.
-      * @param array<int, mixed> $parameters
+     * @param array<int|string, mixed> $parameters
      */
     private function callInstanceMethod(object $instance, string $method, array $parameters, ContainerInterface $container): mixed
     {
         $className = get_class($instance);
-        
+
         try {
             $methodParams = $this->reflectionCache->getMethodParameters($className, $method);
             $resolvedParams = $this->resolveMethodParameters($methodParams, $parameters, $container);
-            
+
             return $instance->$method(...$resolvedParams);
         } catch (\Throwable $e) {
             throw new ContainerResolutionException(
@@ -114,8 +110,7 @@ class MethodInjector
     }
 
     /**
-     * Call a function with dependency injection.
-      * @param array<int, mixed> $parameters
+     * @param array<int|string, mixed> $parameters
      */
     private function callFunction(string $function, array $parameters, ContainerInterface $container): mixed
     {
@@ -123,7 +118,7 @@ class MethodInjector
             $reflection = $this->reflectionCache->getFunction($function);
             $methodParams = $this->extractParametersFromReflection($reflection->getParameters());
             $resolvedParams = $this->resolveMethodParameters($methodParams, $parameters, $container);
-            
+
             return $function(...$resolvedParams);
         } catch (\Throwable $e) {
             throw new ContainerResolutionException(
@@ -140,8 +135,7 @@ class MethodInjector
     }
 
     /**
-     * Call a closure with dependency injection.
-      * @param array<int, mixed> $parameters
+     * @param array<int|string, mixed> $parameters
      */
     private function callClosure(\Closure $closure, array $parameters, ContainerInterface $container): mixed
     {
@@ -149,11 +143,11 @@ class MethodInjector
             $reflection = new \ReflectionFunction($closure);
             $methodParams = $this->extractParametersFromReflection($reflection->getParameters());
             $resolvedParams = $this->resolveMethodParameters($methodParams, $parameters, $container);
-            
+
             return $closure(...$resolvedParams);
         } catch (\Throwable $e) {
             throw new ContainerResolutionException(
-                "Failed to call closure: " . $e->getMessage(),
+                'Failed to call closure: ' . $e->getMessage(),
                 'Closure',
                 null,
                 [
@@ -166,47 +160,57 @@ class MethodInjector
     }
 
     /**
-     * Resolve method parameters by injecting dependencies and using provided parameters.
+     * Resolve method parameters, checking explicit overrides by name or type before autowiring.
+     *
+     * @param array<int, array<string, mixed>> $methodParams
+     * @param array<int|string, mixed> $providedParams
+     * @return array<int, mixed>
      */
-    /**
-     * @return array<string, mixed>
-      * @param array<string, mixed> $methodParams
-      * @param array<string, mixed> $providedParams
-     */
-private function resolveMethodParameters(array $methodParams, array $providedParams, ContainerInterface $container): array
+    private function resolveMethodParameters(array $methodParams, array $providedParams, ContainerInterface $container): array
     {
         $resolvedParams = [];
-        
+
         foreach ($methodParams as $param) {
             $paramName = $param['name'];
-            
-            // Check if parameter was explicitly provided
+
+            // 1. Explicit override by parameter name
             if (array_key_exists($paramName, $providedParams)) {
                 $resolvedParams[] = $providedParams[$paramName];
                 continue;
             }
-            
-            // Try to resolve from container if it has a type
+
+            // 2. Explicit override by type/class name
             if ($param['hasType'] && !$param['isBuiltin']) {
                 $typeName = $param['type']->getName();
-                
+
+                if (array_key_exists($typeName, $providedParams)) {
+                    $resolvedParams[] = $providedParams[$typeName];
+                    continue;
+                }
+
+                // 3. Autowire from container
                 try {
                     $resolvedParams[] = $container->get($typeName);
                     continue;
-                } catch (\Throwable $e) {
-                    // Fall through to default value handling
+                } catch (\Throwable) {
+                    // Fall through to default/null handling
                 }
             }
-            
-            // Use default value if available
+
+            // 4. Default value
             if ($param['hasDefaultValue']) {
                 $resolvedParams[] = $param['defaultValue'];
                 continue;
             }
-            
-            // Parameter cannot be resolved
+
+            // 5. Nullable — resolve to null
+            if ($param['allowsNull']) {
+                $resolvedParams[] = null;
+                continue;
+            }
+
             throw new ContainerResolutionException(
-                "Cannot resolve parameter '{$paramName}' - no type hint, no provided value, and no default value",
+                "Cannot resolve parameter '{$paramName}' — no type hint, no provided value, and no default value.",
                 $paramName,
                 null,
                 [
@@ -216,32 +220,31 @@ private function resolveMethodParameters(array $methodParams, array $providedPar
                 ]
             );
         }
-        
+
         return $resolvedParams;
     }
 
     /**
-     * Extract parameter information from reflection parameters.
-      * @param array<string, mixed> $reflectionParams
-      * @return array<string, mixed>
+     * @param array<int, \ReflectionParameter> $reflectionParams
+     * @return array<int, array<string, mixed>>
      */
     private function extractParametersFromReflection(array $reflectionParams): array
     {
         $parameters = [];
-        
+
         foreach ($reflectionParams as $param) {
             $parameters[] = [
-                'name' => $param->getName(),
-                'type' => $param->getType(),
-                'hasType' => $param->hasType(),
-                'isBuiltin' => $param->getType() && $param->getType()->isBuiltin(),
-                'allowsNull' => $param->allowsNull(),
-                'isOptional' => $param->isOptional(),
+                'name'            => $param->getName(),
+                'type'            => $param->getType(),
+                'hasType'         => $param->hasType(),
+                'isBuiltin'       => $param->getType() && $param->getType()->isBuiltin(),
+                'allowsNull'      => $param->allowsNull(),
+                'isOptional'      => $param->isOptional(),
                 'hasDefaultValue' => $param->isDefaultValueAvailable(),
-                'defaultValue' => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null
+                'defaultValue'    => $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null,
             ];
         }
-        
+
         return $parameters;
     }
 }
