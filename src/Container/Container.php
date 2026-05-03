@@ -4,35 +4,34 @@ declare(strict_types=1);
 
 namespace Denosys\Container;
 
-use Throwable;
+use Closure;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
-use ReflectionUnionType;
 use ReflectionNamedType;
-use Denosys\Events\Dispatcher;
-use Denosys\Events\ListenerProvider;
-use Denosys\Container\Events\ResolutionDone;
-use Denosys\Container\Events\ResolutionFailed;
-use Denosys\Container\Events\BindingRegistered;
-use Denosys\Container\Events\ResolutionStarting;
+use ReflectionUnionType;
+use Throwable;
 use Denosys\Container\Binding\ContextualBindingManager;
 use Denosys\Container\Binding\TaggedBindingRegistry;
-use Denosys\Container\Binding\ConditionalBindingResolver;
-use Denosys\Container\Injection\MethodInjector;
-use Denosys\Container\Resolution\MultiResolutionManager;
-use Denosys\Container\Resolution\ScopedBindingContext;
-use Denosys\Container\Resolution\LazyResolutionProxy;
-use Denosys\Container\Performance\ReflectionCache;
-use Denosys\Container\Performance\PerformanceProfiler;
-use Denosys\Container\Performance\ContainerCompiler;
-use Denosys\Container\Validation\ContainerValidator;
-use Denosys\Container\Testing\MockBindingManager;
 use Denosys\Container\Decorators\DecoratorChain;
+use Denosys\Container\Events\BindingRegistered;
+use Denosys\Container\Events\ResolutionDone;
+use Denosys\Container\Events\ResolutionFailed;
+use Denosys\Container\Events\ResolutionStarting;
+use Denosys\Container\Exceptions\ContainerException;
 use Denosys\Container\Exceptions\ContainerResolutionException;
 use Denosys\Container\Exceptions\NotFoundException;
-use Denosys\Container\Exceptions\ContainerException;
-use Closure;
+use Denosys\Container\Injection\MethodInjector;
+use Denosys\Container\Performance\ContainerCompiler;
+use Denosys\Container\Performance\PerformanceProfiler;
+use Denosys\Container\Performance\ReflectionCache;
+use Denosys\Container\Resolution\LazyResolutionProxy;
+use Denosys\Container\Resolution\MultiResolutionManager;
+use Denosys\Container\Resolution\ScopedBindingContext;
+use Denosys\Container\Testing\MockBindingManager;
+use Denosys\Container\Validation\ContainerValidator;
+use Denosys\Events\Dispatcher;
+use Denosys\Events\ListenerProvider;
 
 class Container implements
     ContainerInterface,
@@ -224,7 +223,7 @@ class Container implements
         if (isset($this->removedBindings[$id])) {
             return false;
         }
-        return isset($this->bindings[$id]) || isset($this->instances[$id]) || class_exists($id);
+        return isset($this->bindings[$id]) || isset($this->bindings[$id]) || isset($this->instances[$id]) || class_exists($id);
     }
 
     /**
@@ -685,7 +684,7 @@ class Container implements
                                 'name' => $parameter->getName(),
                                 'type' => $type->getName(),
                                 'optional' => $parameter->isOptional(),
-                                'has_default' => $parameter->isDefaultValueAvailable()
+                                 'has_default' => $parameter->isDefaultValueAvailable()
                             ];
                         }
                     }
