@@ -73,8 +73,8 @@ class ContainerValidator
                 }
             }
 
-            $statistics["error_count"]   = count(array_filter($issues, fn(ValidationIssue $i) => $i->isError()));
-            $statistics["warning_count"] = count(array_filter($issues, fn(ValidationIssue $i) => $i->isWarning()));
+            $statistics["error_count"]   = count(array_filter($issues, fn($i) => $i->isError()));
+            $statistics["warning_count"] = count(array_filter($issues, fn($i) => $i->isWarning()));
 
             // Valid unless there are error-level issues (warnings are allowed).
             $isValid = $statistics["error_count"] === 0;
