@@ -272,7 +272,17 @@ class Container implements
             return new $class;
         }
 
-        $arguments = $this->resolveParameters($parameters, $class);
+        if ($this->advancedFeaturesInitialized) {
+            $this->contextualBindings->pushContext($class);
+        }
+
+        try {
+            $arguments = $this->resolveParameters($parameters, $class);
+        } finally {
+            if ($this->advancedFeaturesInitialized) {
+                $this->contextualBindings->popContext();
+            }
+        }
 
         return $reflectionClass->newInstanceArgs($arguments);
     }
