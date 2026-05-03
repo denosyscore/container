@@ -223,7 +223,7 @@ class Container implements
         if (isset($this->removedBindings[$id])) {
             return false;
         }
-        return isset($this->bindings[$id]) || isset($this->bindings[$id]) || isset($this->instances[$id]) || class_exists($id);
+        return isset($this->bindings[$id]) || isset($this->instances[$id]) || class_exists($id);
     }
 
     /**
@@ -684,7 +684,7 @@ class Container implements
                                 'name' => $parameter->getName(),
                                 'type' => $type->getName(),
                                 'optional' => $parameter->isOptional(),
-                                 'has_default' => $parameter->isDefaultValueAvailable()
+                                'has_default' => $parameter->isDefaultValueAvailable()
                             ];
                         }
                     }
