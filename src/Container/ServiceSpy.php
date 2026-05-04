@@ -25,13 +25,13 @@ class ServiceSpy
 
     /**
      * Record a method call on the spied service.
-     * 
+     *
      * @param string $method The method name
      * @param array<mixed> $arguments The method arguments
      * @param mixed $result The method result
      * @param float $executionTime The execution time in milliseconds
      */
-    public function recordCall(string $method, array $arguments, mixed $result, float $executionTime): void
+    public function recordCall(string $method, array $arguments, mixed $result = null, float $executionTime = 0.0): void
     {
         $this->calls[] = [
             'method' => $method,

@@ -660,7 +660,10 @@ class Container implements
 
         if (!isset($this->spies[$abstract])) {
             $instance = $this->get($abstract);
-            $this->spies[$abstract] = new ServiceSpy($abstract, $instance);
+            $spy = new ServiceSpy($abstract, $instance);
+            $proxy = new ServiceSpyProxy($instance, $spy);
+            $this->instances[$abstract] = $proxy;
+            $this->spies[$abstract] = $spy;
         }
 
         return $this->spies[$abstract];
