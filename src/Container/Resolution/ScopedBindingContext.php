@@ -18,7 +18,11 @@ use Denosys\Container\Exceptions\ContainerResolutionException;
 class ScopedBindingContext
 {
     /**
-     * @var array<array<string, mixed>> Stack of scoped binding contexts
+     * @var array<array<string, mixed>> Stack of scoped binding contexts.
+     * Each frame has two keys:
+     *   'previous'   => the activeScopedBindings array before this scope was pushed
+     *   'snapshots'  => pre-scope container state keyed by abstract:
+     *                   ['existed' => bool, 'binding' => array|null]
      */
     private array $scopeStack = [];
 
@@ -55,15 +59,37 @@ class ScopedBindingContext
     /**
      * Push a new scope with the given bindings.
      *
+     * For each abstract being overridden, snapshot its pre-scope container state
+     * so that popScope() can accurately restore or remove it.
+     *
      * @param array<int|string, mixed> $bindings
      */
     public function pushScope(array $bindings, ContainerInterface $container): void
     {
         $this->scopeDepth++;
 
-        // Store the current state
-        $previousBindings = $this->activeScopedBindings;
-        $this->scopeStack[] = $previousBindings;
+        // Snapshot the actual pre-scope container state for every abstract we're about to override.
+        $snapshots = [];
+        foreach ($bindings as $abstract => $concrete) {
+            $containerBindings = $container->getContainerBindings();
+            if (array_key_exists($abstract, $containerBindings)) {
+                $snapshots[$abstract] = [
+                    'existed' => true,
+                    'binding'  => $containerBindings[$abstract],
+                ];
+            } else {
+                $snapshots[$abstract] = [
+                    'existed' => false,
+                    'binding'  => null,
+                ];
+            }
+        }
+
+        // Store the current state alongside the snapshots
+        $this->scopeStack[] = [
+            'previous'  => $this->activeScopedBindings,
+            'snapshots' => $snapshots,
+        ];
 
         // Apply new bindings
         $this->activeScopedBindings = array_merge($this->activeScopedBindings, $bindings);
@@ -88,15 +114,16 @@ class ScopedBindingContext
 
         $this->scopeDepth--;
 
-        // Get the current bindings to restore
-        $currentBindings = $this->activeScopedBindings;
+        // Retrieve the frame we saved in pushScope()
+        $frame = array_pop($this->scopeStack);
+        $previousBindings = $frame['previous'];
+        $snapshots        = $frame['snapshots'];
 
-        // Restore the previous scope
-        $previousBindings = array_pop($this->scopeStack);
+        // Restore the activeScopedBindings tracking array
         $this->activeScopedBindings = $previousBindings;
 
-        // Calculate which bindings need to be restored or removed
-        $this->restoreBindings($currentBindings, $previousBindings, $container);
+        // Restore the container to its pre-scope state for every snapshotted abstract
+        $this->restoreBindingsFromSnapshots($snapshots, $container);
     }
 
     /**
@@ -226,26 +253,28 @@ class ScopedBindingContext
     }
 
     /**
-     * Restore bindings when popping a scope.
+     * Restore the container to its pre-scope state using the snapshots captured in pushScope().
      *
-     * @param array<string, mixed> $currentBindings
-     * @param array<string, mixed> $previousBindings
+     * For each snapshotted abstract:
+     *   - If it existed before the scope: re-bind it with its original closure and shared flag.
+     *   - If it did not exist before the scope: remove the binding so it is no longer present.
+     *
+     * @param array<string, array{existed: bool, binding: array|null}> $snapshots
      */
-    private function restoreBindings(array $currentBindings, array $previousBindings, ContainerInterface $container): void
+    private function restoreBindingsFromSnapshots(array $snapshots, ContainerInterface $container): void
     {
-        // Find bindings that need to be removed (were added in this scope)
-        foreach ($currentBindings as $abstract => $concrete) {
-            if (!array_key_exists($abstract, $previousBindings)) {
-                // This binding was added in the current scope, remove it
-                $this->removeScopedBinding($abstract, $container);
-            }
-        }
-
-        // Find bindings that need to be restored (were overridden in this scope)
-        foreach ($previousBindings as $abstract => $concrete) {
-            if (!array_key_exists($abstract, $currentBindings) || $currentBindings[$abstract] !== $concrete) {
-                // This binding was different or removed, restore it
-                $this->applySingleBinding($abstract, $concrete, $container);
+        foreach ($snapshots as $abstract => $snapshot) {
+            if ($snapshot['existed']) {
+                // Re-apply the original binding from the snapshot
+                $binding = $snapshot['binding'];
+                $container->bind(
+                    $abstract,
+                    $binding['concrete'],
+                    $binding['shared']
+                );
+            } else {
+                // This abstract did not exist before the scope; remove it entirely
+                $container->removeBinding($abstract);
             }
         }
     }
