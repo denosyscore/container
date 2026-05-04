@@ -130,11 +130,10 @@ class ContainerCompiler
 
     /**
      * Analyze the container configuration.
-     */
-    /**
+     *
      * @return array<string, mixed>
      */
-private function analyzeContainer(): array
+    private function analyzeContainer(): array
     {
         $bindings = $this->container->getBindings();
         $analysis = [
@@ -175,8 +174,9 @@ private function analyzeContainer(): array
 
     /**
      * Analyze a single binding.
-      * @param array<string, mixed> $bindingInfo
-      * @return array<string, mixed>
+     *
+     * @param array<string, mixed> $bindingInfo
+     * @return array<string, mixed>
      */
     private function analyzeBinding(string $abstract, array $bindingInfo): array
     {
@@ -193,7 +193,8 @@ private function analyzeContainer(): array
 
     /**
      * Determine the type of binding.
-      * @param array<string, mixed> $bindingInfo
+     *
+     * @param array<string, mixed> $bindingInfo
      */
     private function determineBindingType(string $abstract, array $bindingInfo): string
     {
@@ -210,8 +211,9 @@ private function analyzeContainer(): array
 
     /**
      * Calculate complexity score for a binding.
-      * @param array<string, mixed> $bindingAnalysis
-      * @param array<string> $dependencies
+     *
+     * @param array<string, mixed> $bindingAnalysis
+     * @param array<string> $dependencies
      */
     private function calculateComplexityScore(string $abstract, array $bindingAnalysis, array $dependencies): int
     {
@@ -237,7 +239,8 @@ private function analyzeContainer(): array
 
     /**
      * Calculate binding complexity.
-      * @param array<string, mixed> $bindingInfo
+     *
+     * @param array<string, mixed> $bindingInfo
      */
     private function calculateBindingComplexity(array $bindingInfo): string
     {
@@ -256,7 +259,8 @@ private function analyzeContainer(): array
 
     /**
      * Check if a binding can be inlined for optimization.
-      * @param array<string, mixed> $bindingInfo
+     *
+     * @param array<string, mixed> $bindingInfo
      */
     private function canInlineBinding(string $abstract, array $bindingInfo): bool
     {
@@ -271,8 +275,9 @@ private function analyzeContainer(): array
 
     /**
      * Identify optimization opportunities.
-      * @param array<string, mixed> $bindingAnalysis
-      * @return array<array<string, mixed>>
+     *
+     * @param array<string, mixed> $bindingAnalysis
+     * @return array<array<string, mixed>>
      */
     private function identifyOptimizations(string $abstract, array $bindingAnalysis, int $complexity): array
     {
@@ -295,7 +300,8 @@ private function analyzeContainer(): array
 
     /**
      * Generate the compiled container code.
-      * @param array<string, mixed> $analysis
+     *
+     * @param array<string, mixed> $analysis
      */
     private function generateCompiledContainer(array $analysis, string $fingerprint): string
     {
@@ -881,7 +887,8 @@ PHP;
 
     /**
      * Generate inline binding code.
-      * @param array<string, mixed> $bindingAnalysis
+     *
+     * @param array<string, mixed> $bindingAnalysis
      */
     private function generateInlineBinding(string $abstract, array $bindingAnalysis): string
     {
@@ -904,7 +911,8 @@ PHP;
 
     /**
      * Generate factory methods for complex bindings.
-      * @param array<string, mixed> $analysis
+     *
+     * @param array<string, mixed> $analysis
      */
     private function generateFactoryMethods(array $analysis): string
     {
@@ -921,8 +929,9 @@ PHP;
 
     /**
      * Generate a factory method for a specific binding.
-      * @param array<string, mixed> $bindingAnalysis
-      * @param array<string, mixed> $analysis
+     *
+     * @param array<string, mixed> $bindingAnalysis
+     * @param array<string, mixed> $analysis
      */
     private function generateFactoryMethod(string $abstract, array $bindingAnalysis, array $analysis): string
     {
@@ -951,7 +960,8 @@ PHP;
 
     /**
      * Generate validation method.
-      * @param array<string, mixed> $analysis
+     *
+     * @param array<string, mixed> $analysis
      */
     private function generateValidationMethod(array $analysis): string
     {
@@ -1116,7 +1126,8 @@ PHP;
 
     /**
      * Get compilation statistics.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getCompilationStats(): array
     {
