@@ -474,13 +474,14 @@ class Container implements
             try {
                 $instance = $concrete($this);
 
-                if ($isShared) {
-                    $this->instances[$id] = $instance;
-                }
-
-                // Apply decorators if any
+                // Apply decorators if any BEFORE caching, so the singleton cache
+                // holds the decorated instance, not the raw one. (C-2 fix)
                 if ($this->advancedFeaturesInitialized && $this->decoratorChain->hasDecorators($id)) {
                     $instance = $this->decoratorChain->decorate($id, $instance, $this);
+                }
+
+                if ($isShared) {
+                    $this->instances[$id] = $instance;
                 }
             } finally {
                 unset($this->resolvingStack[$id]);
