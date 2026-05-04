@@ -76,4 +76,83 @@ class ContainerValidatorTest extends TestCase
         self::assertFalse($result->hasErrors());
         self::assertFalse($result->hasWarnings());
     }
+
+
+    // -----------------------------------------------------------------------
+    // Mi-4 tests
+    // -----------------------------------------------------------------------
+
+    public function testCircularDependencyIsDetectedAsError(): void
+    {
+        $this->container->bind(Mi4ServiceA::class);
+        $this->container->bind(Mi4ServiceB::class);
+        $result = $this->validator->validate($this->container);
+
+        self::assertFalse($result->isValid(), 'Container with circular dep should be invalid');
+        self::assertTrue($result->hasErrors(), 'Circular dep should produce an ERROR issue');
+
+        $errors = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_ERROR);
+        $found = false;
+        foreach ($errors as $issue) {
+            if (stripos($issue->message, 'circular') !== false) {
+                $found = true;
+                break;
+            }
+        }
+        self::assertTrue($found, 'At least one ERROR issue should mention "circular"');
+    }
+
+    public function testMissingBindingForInterfaceParameterIsWarning(): void
+    {
+        // Mi4NeedsUnbound depends on Mi4UnboundInterface which is NOT registered.
+        $this->container->bind(Mi4NeedsUnbound::class);
+        $result = $this->validator->validate($this->container);
+
+        self::assertTrue($result->hasWarnings(), 'Missing unbound interface dep should produce a WARNING');
+
+        $warnings = $result->getIssuesBySeverity(ValidationIssue::SEVERITY_WARNING);
+        $found = false;
+        foreach ($warnings as $issue) {
+            if (str_contains($issue->message, 'Mi4UnboundInterface')) {
+                $found = true;
+                break;
+            }
+        }
+        self::assertTrue($found, 'A WARNING issue should mention the unbound interface name');
+    }
+
+    public function testCleanFullyResolvableContainerIsValid(): void
+    {
+        // Mi4DependsOnSimple -> Mi4SimpleService (concrete, instantiable - no explicit binding needed)
+        $this->container->bind(Mi4SimpleService::class);
+        $this->container->bind(Mi4DependsOnSimple::class);
+        $result = $this->validator->validate($this->container);
+
+        self::assertTrue($result->isValid(), 'Fully resolvable container should be valid');
+        self::assertFalse($result->hasErrors());
+        self::assertFalse($result->hasWarnings());
+    }
+}
+
+
+// ---------------------------------------------------------------------------
+// Mi-4 fixtures: circular dependency A -> B -> A
+// ---------------------------------------------------------------------------
+class Mi4ServiceB {
+    public function __construct(public readonly Mi4ServiceA $a) {}
+}
+class Mi4ServiceA {
+    public function __construct(public readonly Mi4ServiceB $b) {}
+}
+
+// Mi-4 fixtures: missing binding - NeedsUnbound depends on UnboundIface (not registered)
+interface Mi4UnboundInterface {}
+class Mi4NeedsUnbound {
+    public function __construct(public readonly Mi4UnboundInterface $dep) {}
+}
+
+// Mi-4 fixtures: clean fully-resolvable container
+class Mi4SimpleService {}
+class Mi4DependsOnSimple {
+    public function __construct(public readonly Mi4SimpleService $svc) {}
 }
