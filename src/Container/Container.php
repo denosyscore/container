@@ -549,6 +549,18 @@ class Container implements
         return $this->taggedBindings->resolveTagged($tag, $this);
     }
 
+    /**
+     * Return the raw abstract class/interface names registered under a tag,
+     * without instantiating any of them.
+     *
+     * @return array<string>
+     */
+    public function getTaggedAbstracts(string $tag): array
+    {
+        $this->initializeAdvancedFeatures();
+        return $this->taggedBindings->getTaggedServices($tag);
+    }
+
     public function tag(array|string $abstracts, array|string $tags): void
     {
         $this->initializeAdvancedFeatures();
