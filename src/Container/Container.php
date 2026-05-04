@@ -446,15 +446,19 @@ class Container implements
                 return $instance;
             }
 
+            $originalId = $id;
             $id = $this->aliases[$id] ?? $id;
 
             if (isset($this->instances[$id])) {
                 return $this->instances[$id];
             }
 
-            // Try to load deferred provider before checking bindings
+            // Try to load deferred provider before checking bindings.
+            // Pass $originalId so providers registered under an alias key are discovered.
+            // Re-resolve the alias afterward in case the provider registered it during boot.
             if ($this->deferredResolver !== null && !isset($this->bindings[$id])) {
-                ($this->deferredResolver)($id);
+                ($this->deferredResolver)($originalId);
+                $id = $this->aliases[$originalId] ?? $id;
             }
 
             if (isset($this->bindings[$id])) {
