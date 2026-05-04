@@ -136,4 +136,13 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
      * @param Closure(string): void $resolver
      */
     public function setDeferredResolver(Closure $resolver): void;
+
+    /**
+     * Return the raw bindings array for internal scope-snapshot purposes.
+     *
+     * Each entry has the shape: ['concrete' => Closure, 'shared' => bool, 'concrete_class' => string|null]
+     *
+     * @return array<string, array{concrete: \Closure, shared: bool, concrete_class: string|null}>
+     */
+    public function getContainerBindings(): array;
 }

@@ -698,6 +698,16 @@ class Container implements
     }
 
     /**
+     * Return the raw bindings array for internal scope-snapshot purposes.
+     *
+     * @return array<string, array{concrete: \Closure, shared: bool, concrete_class: string|null}>
+     */
+    public function getContainerBindings(): array
+    {
+        return $this->bindings;
+    }
+
+    /**
      * @return array{abstract: string, dependencies: array<int, array{name: string, type: string, optional: bool, has_default: bool}>, is_bound: bool, tags: array<string>}|array{abstract: string, error: string, dependencies: array<never>}
      */
     public function getDependencies(string $abstract): array
