@@ -112,6 +112,15 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function middleware(string $abstract, callable $middleware): void;
 
     /**
+     * Resolve all services tagged with a given tag.
+     *
+     * @param string $tag
+     *
+     * @return array<int, mixed>
+     */
+    public function tagged(string $tag): array;
+
+    /**
      * Resolve all implementations of an abstract.
      *
      * @param string $abstract

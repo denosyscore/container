@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Denosys\Container\Binding;
 
 use Denosys\Container\ContextualBindingBuilder;
-use Denosys\Container\Container;
+use Denosys\Container\ContainerInterface;
 use Denosys\Container\Exceptions\ContainerResolutionException;
 use Closure;
 
@@ -69,7 +69,7 @@ class ContextualBindingManager
     /**
      * Resolve using contextual binding.
      */
-    public function resolve(string $abstract, Container $container): mixed
+    public function resolve(string $abstract, ContainerInterface $container): mixed
     {
         $context = $this->getCurrentContext();
         
@@ -185,7 +185,7 @@ public function getBindings(): array
     /**
      * Resolve the actual implementation from the binding specification.
      */
-    private function resolveImplementation(mixed $implementation, Container $container): mixed
+    private function resolveImplementation(mixed $implementation, ContainerInterface $container): mixed
     {
         // Handle different types of implementations
         if ($implementation instanceof Closure) {

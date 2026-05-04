@@ -94,7 +94,11 @@ class PerformanceProfiler
     public function recordMethodInjection(float $injectionTime): void
     {
         $this->methodInjectionTimes[] = $injectionTime;
+        if (count($this->methodInjectionTimes) > 1000) {
+            array_shift($this->methodInjectionTimes);
+        }
     }
+
 
     /**
      * Record a custom metric.
