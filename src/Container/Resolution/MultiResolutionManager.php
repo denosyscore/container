@@ -210,8 +210,18 @@ class MultiResolutionManager
             $implementations = array_unique(array_merge($implementations, $discovered));
         }
 
-        // Add tagged implementations if the container supports it
-        if (method_exists($container, 'tagged')) {
+        // Add tagged implementations if the container supports it.
+        // Use getTaggedAbstracts() to obtain raw class names without triggering
+        // instantiation — tagged() resolves every service immediately, which
+        // would cause double-construction when resolveAll() calls get() below.
+        if (method_exists($container, 'getTaggedAbstracts')) {
+            $taggedAbstracts = $container->getTaggedAbstracts($abstract);
+            foreach ($taggedAbstracts as $taggedAbstract) {
+                if (!in_array($taggedAbstract, $implementations, true)) {
+                    $implementations[] = $taggedAbstract;
+                }
+            }
+        } elseif (method_exists($container, 'tagged')) {
             $taggedServices = $container->tagged($abstract);
             foreach ($taggedServices as $service) {
                 $className = get_class($service);
@@ -266,6 +276,9 @@ class MultiResolutionManager
      */
     private function isAbstractClass(string $class): bool
     {
+        if (!class_exists($class)) {
+            return false;
+        }
         $reflection = new \ReflectionClass($class);
         return $reflection->isAbstract() && !$reflection->isInterface();
     }
