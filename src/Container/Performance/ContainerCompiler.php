@@ -880,32 +880,6 @@ PHP;
     }
 
     /**
-     * Generate optimized get method.
-      * @param array<string, mixed> $analysis
-     */
-    private function generateOptimizedGetMethod(array $analysis): string
-    {
-        $code = "    public function get(string \$abstract): mixed\n    {\n";
-        $code .= "        return match (\$abstract) {\n";
-
-        foreach ($analysis['bindings'] as $abstract => $bindingAnalysis) {
-            if (in_array('can_inline', $analysis['optimization_opportunities'][$abstract] ?? [])) {
-                $code .= $this->generateInlineBinding($abstract, $bindingAnalysis);
-            } elseif (in_array('optimize_singleton', $analysis['optimization_opportunities'][$abstract] ?? [])) {
-                $code .= $this->generateOptimizedSingleton($abstract);
-            } else {
-                $code .= "            '{$abstract}' => \$this->create" . $this->sanitizeClassName($abstract) . "(),\n";
-            }
-        }
-
-        $code .= "            default => parent::get(\$abstract)\n";
-        $code .= "        };\n";
-        $code .= "    }\n\n";
-
-        return $code;
-    }
-
-    /**
      * Generate inline binding code.
       * @param array<string, mixed> $bindingAnalysis
      */
