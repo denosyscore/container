@@ -14,22 +14,16 @@ class PerformanceProfiler
     /**
      * @var array<string, array> Resolution times by service
      */
-    /** @var array<string, mixed> */
-
     private array $resolutionTimes = [];
 
     /**
      * @var array<string, int> Resolution counts by service
      */
-    /** @var array<string, mixed> */
-
     private array $resolutionCounts = [];
 
     /**
      * @var array<string, float> Method injection times
      */
-    /** @var array<string, mixed> */
-
     private array $methodInjectionTimes = [];
 
     /**
@@ -55,8 +49,6 @@ class PerformanceProfiler
     /**
      * @var array<string, mixed> Custom metrics
      */
-    /** @var array<string, mixed> */
-
     private array $customMetrics = [];
 
     public function __construct()
@@ -130,11 +122,10 @@ class PerformanceProfiler
 
     /**
      * Get the slowest resolutions.
-     */
-    /**
+     *
      * @return array<string, mixed>
      */
-public function getSlowestResolutions(int $limit = 10): array
+    public function getSlowestResolutions(int $limit = 10): array
     {
         $slowest = [];
 
@@ -149,7 +140,8 @@ public function getSlowestResolutions(int $limit = 10): array
 
     /**
      * Get the most frequently resolved services.
-      * @return array<string, int>
+     *
+     * @return array<string, int>
      */
     public function getMostResolvedServices(int $limit = 10): array
     {
@@ -169,7 +161,8 @@ public function getSlowestResolutions(int $limit = 10): array
 
     /**
      * Get performance bottlenecks.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getBottlenecks(): array
     {
@@ -216,7 +209,8 @@ public function getSlowestResolutions(int $limit = 10): array
 
     /**
      * Get optimization suggestions based on collected data.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getOptimizationSuggestions(): array
     {
@@ -299,7 +293,8 @@ public function getSlowestResolutions(int $limit = 10): array
 
     /**
      * Export profiling data for analysis.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function exportData(): array
     {

@@ -19,24 +19,11 @@ class ContainerResolutionException extends Exception implements ContainerExcepti
      * @param array<string>|null $resolutionStack The stack of classes being resolved
      * @param array<string>|null $suggestions Suggested solutions for the error
      * @param Throwable|null $previous Previous exception in the chain
-      * @param array<string, mixed> $resolutionStack
-      * @param array<string, mixed> $suggestions
      */
     public function __construct(
         string $message,
-        /**
-         * @param array<string, mixed> $resolutionStack
-         * @param array<string, mixed> $suggestions
-         */
         public readonly ?string $abstract = null,
-        /**
-         * @param array<string, mixed> $resolutionStack
-         * @param array<string, mixed> $suggestions
-         */
         public readonly ?array $resolutionStack = null,
-        /**
-         * @param array<string, mixed> $suggestions
-         */
         public readonly ?array $suggestions = null,
         ?Throwable $previous = null
     ) {

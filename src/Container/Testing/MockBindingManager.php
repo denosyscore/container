@@ -36,13 +36,9 @@ class MockBindingManager
     }
 
     /**
-
      * @return array<string, mixed>
-
      */
-
-public function getAllMocks(): array
-
+    public function getAllMocks(): array
     {
         return $this->mocks;
     }

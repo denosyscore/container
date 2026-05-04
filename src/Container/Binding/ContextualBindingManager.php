@@ -21,15 +21,11 @@ class ContextualBindingManager
      * @var array<string, array<string, mixed>> Contextual bindings
      * Format: [concrete_class => [abstract => implementation]]
      */
-    /** @var array<string, mixed> */
-
     private array $contextualBindings = [];
 
     /**
      * @var array<string> Current resolution stack for context tracking
      */
-    /** @var array<string, mixed> */
-
     private array $resolutionContext = [];
 
     /**
@@ -113,18 +109,18 @@ class ContextualBindingManager
 
     /**
      * Get all contextual bindings.
-     */
-    /**
+     *
      * @return array<string, mixed>
      */
-public function getBindings(): array
+    public function getBindings(): array
     {
         return $this->contextualBindings;
     }
 
     /**
      * Get contextual bindings for a specific concrete class.
-      * @return array<string, callable>
+     *
+     * @return array<string, callable>
      */
     public function getBindingsFor(string $concrete): array
     {
@@ -162,7 +158,8 @@ public function getBindings(): array
 
     /**
      * Get statistics about contextual bindings.
-      * @return array<string, mixed>
+     *
+     * @return array<string, mixed>
      */
     public function getStatistics(): array
     {
