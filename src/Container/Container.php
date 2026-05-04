@@ -165,11 +165,28 @@ class Container implements
      */
     public function alias(string $alias, string $abstract): void
     {
-        if (!$this->has($abstract)) {
-            throw new NotFoundException("Cannot create alias '{$alias}' because the abstract '{$abstract}' is not bound.");
+        // Allow if explicitly registered in bindings or instances
+        if (isset($this->bindings[$abstract]) || isset($this->instances[$abstract])) {
+            $this->aliases[$alias] = $abstract;
+            return;
         }
 
-        $this->aliases[$alias] = $abstract;
+        // Allow if the class exists and is instantiable (autowirable)
+        if (class_exists($abstract)) {
+            try {
+                $reflection = new ReflectionClass($abstract);
+                if ($reflection->isInstantiable()) {
+                    $this->aliases[$alias] = $abstract;
+                    return;
+                }
+            } catch (ReflectionException) {
+                // Fall through to throw NotFoundException
+            }
+        }
+
+        throw new NotFoundException(
+            "Cannot alias '{$alias}' to '{$abstract}': target is not bound and not an instantiable class."
+        );
     }
 
     /**
