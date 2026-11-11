@@ -17,22 +17,43 @@ composer require denosyscore/container
 
 ## Quick Start
 
+<!-- quickstart -->
 ```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
 use Denosys\Container\Container;
 
+interface Clock
+{
+    public function now(): DateTimeImmutable;
+}
+
+final class SystemClock implements Clock
+{
+    public function now(): DateTimeImmutable
+    {
+        return new DateTimeImmutable();
+    }
+}
+
+final class Greeter
+{
+    // Constructor dependencies are resolved automatically.
+    public function __construct(private Clock $clock) {}
+
+    public function greet(string $name): string
+    {
+        return ($this->clock->now()->format('H') < 12 ? 'Good morning' : 'Hello') . ", {$name}";
+    }
+}
+
 $container = new Container();
+$container->singleton(Clock::class, SystemClock::class);
 
-// Bind an interface to a concrete class
-$container->bind(LoggerInterface::class, FileLogger::class);
-
-// Bind as a singleton
-$container->singleton(CacheInterface::class, RedisCache::class);
-
-// Resolve — dependencies are injected automatically
-$logger = $container->get(LoggerInterface::class);
-$cache  = $container->get(CacheInterface::class);
-
-assert($cache === $container->get(CacheInterface::class)); // same instance
+echo $container->get(Greeter::class)->greet('Ada'), "\n";
+var_dump($container->get(Clock::class) === $container->get(Clock::class));  // bool(true)
 ```
 
 ## Autowiring
