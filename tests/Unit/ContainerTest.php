@@ -145,29 +145,12 @@ class ContainerTest extends TestCase
         $this->container->get('A');
     }
 
+    /** PSR-11: an unbound interface is not an entry, so get() throws NotFound. */
     public function testUnresolvableInterfaceThrows(): void
     {
-        $this->expectException(ContainerResolutionException::class);
+        self::assertFalse($this->container->has(TestInterface::class));
+        $this->expectException(NotFoundException::class);
         $this->container->get(TestInterface::class);
-    }
-
-    public function testResolutionHistoryIsTracked(): void
-    {
-        $this->container->bind(SimpleService::class);
-        $this->container->get(SimpleService::class);
-        $history = $this->container->getResolutionHistory();
-        self::assertNotEmpty($history);
-        self::assertSame(SimpleService::class, $history[0]['abstract']);
-    }
-
-    public function testResolutionHistoryRingBuffer(): void
-    {
-        $this->container->setResolutionHistoryLimit(3);
-        $this->container->bind(SimpleService::class);
-        for ($i = 0; $i < 5; $i++) {
-            $this->container->get(SimpleService::class);
-        }
-        self::assertCount(3, $this->container->getResolutionHistory());
     }
 
     public function testDropStaleInstancesOnRebind(): void

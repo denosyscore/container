@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.13.0 – 2026-11-12
+
+- **Breaking:** rewritten as a small PSR-11 container (about 550 lines). It
+  keeps bindings, singletons, instances, aliases, `extend`, the deferred
+  resolver and autowiring, and removes contextual bindings, tagging, scoped
+  and lazy bindings, decorators, middleware, `call()`, mocks, spies, the
+  validator, the profiler, resolution events and the compiler.
+- **Breaking:** `get()` throws `NotFoundException` for an identifier the
+  container cannot provide, as PSR-11 requires.
+- Adds `#[Config]`, `#[Inject]` and the `ParameterResolver` interface.
+- Requires `denosyscore/contracts` instead of `denosyscore/events`.
+
 ## 0.12.0 – 2026-11-12
 
 - Released with the framework's 0.12 line; no changes to this package.
