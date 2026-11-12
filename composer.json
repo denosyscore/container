@@ -15,7 +15,7 @@
   "license": "MIT",
   "require": {
     "php": "^8.2",
-    "denosyscore/events": "^0.10",
+    "denosyscore/events": "^0.11",
     "psr/container": "^2.0"
   },
   "require-dev": {
@@ -42,7 +42,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-main": "0.10.x-dev"
+      "dev-main": "0.11.x-dev"
     }
   }
 }
