@@ -1,5 +1,7 @@
 # denosyscore/container
 
+> **Read-only split.** This package is developed in [denosyscore/framework](https://github.com/denosyscore/framework) under `packages/container`. Open issues and pull requests there.
+
 A PSR-11 compliant dependency injection container for PHP 8.2+. Supports autowiring, contextual bindings, tagged services, lazy proxies, scoped lifetimes, method injection, decorators, and built-in testing and profiling utilities.
 
 ![PHP ^8.2](https://img.shields.io/badge/PHP-%5E8.2-blue)
