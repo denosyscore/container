@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0 – 2026-11-12
+
+- No longer requires `denosyscore/contracts`.
+
 ## 0.10.0 – 2026-11-12
 
 ### Changed
