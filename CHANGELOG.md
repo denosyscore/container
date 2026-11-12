@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.0 – 2026-11-12
+
+- Released with the framework's 0.16 line; no changes to this package.
+
 ## 0.15.0 – 2026-11-12
 
 - Released with the framework's 0.15 line; no changes to this package.
