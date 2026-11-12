@@ -1,0 +1,1081 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot access offset ''class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Cannot call method configure\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Binding\\ContextualBindingManager\:\:getBindingsFor\(\) should return array\<string, callable\(\)\: mixed\> but returns array\<string, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Psr\\Container\\ContainerInterface\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Parameter \#1 \$tag of method Denosys\\Container\\ContainerInterface\:\:tagged\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Binding/ContextualBindingManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Binding\\TaggedBindingRegistry\:\:resolveTagged\(\) should return array\<object\> but returns list\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Binding/TaggedBindingRegistry.php
+
+		-
+			message: '#^Parameter \#2 \$offset of function array_splice expects int, int\|string given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Binding/TaggedBindingRegistry.php
+
+		-
+			message: '#^Cannot access offset ''concrete'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot access offset ''concrete_class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot access offset ''shared'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method allowsNull\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method getDefaultValue\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method getName\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method getType\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method isDefaultValueAvailable\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: src/Container/Container.php
+
+		-
+			message: '#^Cannot call method recordResolution\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Method Denosys\\Container\\Container\:\:getAlias\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Method Denosys\\Container\\Container\:\:getContainerBindings\(\) should return array\<string, array\{concrete\: Closure, shared\: bool, concrete_class\: string\|null\}\> but returns array\<string, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Method Denosys\\Container\\Container\:\:resolveAll\(\) should return array\<string, mixed\> but returns array\<object\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Method Denosys\\Container\\Container\:\:spy\(\) should return Denosys\\Container\\ServiceSpy but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Method Denosys\\Container\\Container\:\:tagged\(\) should return array\<int, mixed\> but returns array\<object\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Container\:\:getSuggestionsForResolutionFailure\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Container\:\:recordResolution\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Decorators\\DecoratorChain\:\:decorate\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Decorators\\DecoratorChain\:\:hasDecorators\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$class of function class_exists expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$class of method Denosys\\Container\\Container\:\:resolve\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#1 \$target of class Denosys\\Container\\ServiceSpyProxy constructor expects object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \#2 \$abstract of class Denosys\\Container\\Exceptions\\ContainerResolutionException constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \$abstract of class Denosys\\Container\\Events\\ResolutionDone constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Parameter \$abstract of class Denosys\\Container\\Events\\ResolutionFailed constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Part \$id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: src/Container/Container.php
+
+		-
+			message: '#^Part \$name \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 4
+			path: src/Container/Container.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 13
+			path: src/Container/Container.php
+
+		-
+			message: '#^Property Denosys\\Container\\Container\:\:\$instances \(array\<string, mixed\>\) does not accept array\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Property Denosys\\Container\\Container\:\:\$resolvingStack \(array\<string, mixed\>\) does not accept array\<mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 2
+			path: src/Container/Container.php
+
+		-
+			message: '#^Return type \(array\<int, mixed\>\) of method Denosys\\Container\\Container\:\:tagged\(\) should be compatible with return type \(array\<string, mixed\>\) of method Denosys\\Container\\TaggingContainerInterface\:\:tagged\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: src/Container/Container.php
+
+		-
+			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
+			identifier: callable.nonCallable
+			count: 2
+			path: src/Container/Container.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Cannot access an offset on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Cannot access offset ''decorator'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Cannot access offset ''priority'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Method Denosys\\Container\\Decorators\\DecoratorChain\:\:getDecorators\(\) should return array\<string, mixed\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Method Denosys\\Container\\Decorators\\DecoratorChain\:\:getMiddleware\(\) should return array\<class\-string\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Parameter \#1 \$array of function usort expects TArray of array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
+			identifier: callable.nonCallable
+			count: 2
+			path: src/Container/Decorators/DecoratorChain.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:isBuiltin\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Cannot call method getName\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Psr\\Container\\ContainerInterface\:\:get\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Parameter \#1 \$key of function array_key_exists expects int\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Parameter \#1 \$methodParams of method Denosys\\Container\\Injection\\MethodInjector\:\:resolveMethodParameters\(\) expects array\<int, array\<string, mixed\>\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Parameter \#2 \$abstract of class Denosys\\Container\\Exceptions\\ContainerResolutionException constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Part \$paramName \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 2 and 2 will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Trying to invoke string but it might not be a callable\.$#'
+			identifier: callable.nonCallable
+			count: 1
+			path: src/Container/Injection/MethodInjector.php
+
+		-
+			message: '#^Call to an undefined method ReflectionIntersectionType\|ReflectionNamedType\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Call to an undefined method ReflectionIntersectionType\|ReflectionNamedType\:\:isBuiltin\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Method Denosys\\Container\\Injection\\ParameterResolver\:\:resolveParameters\(\) should return array\<string, mixed\> but returns list\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Parameter \#1 \$parameter of method Denosys\\Container\\Injection\\ParameterResolver\:\:resolveParameter\(\) expects ReflectionParameter, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Parameter \#1 \$type of method Denosys\\Container\\Injection\\ParameterResolver\:\:validateNamedType\(\) expects ReflectionNamedType, ReflectionIntersectionType\|ReflectionNamedType given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Property Denosys\\Container\\Injection\\ParameterResolver\:\:\$reflectionCache is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Container/Injection/ParameterResolver.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Cannot access offset ''complexity'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Cannot access offset ''shared'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Cannot access offset ''type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:compileConstructorArguments\(\) has parameter \$reflection with generic class ReflectionClass but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:extractRawBindings\(\) should return array\<string, array\{concrete\: mixed, shared\: bool\}\> but returns array\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateFactoryMethods\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateInlineBinding\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateOptimizedSingleton\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateValidationMethod\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ContainerCompiler\:\:identifyOptimizations\(\) should return array\<array\<string, mixed\>\> but returns list\<string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Offset ''dependencies'' on array\{abstract\: string, dependencies\: array\<int, array\{name\: string, type\: string, optional\: bool, has_default\: bool\}\>, is_bound\: bool, tags\: array\<string\>\}\|array\{abstract\: string, error\: string, dependencies\: array\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Offset ''dependencies'' on string in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Offset ''shared'' on array\{concrete\: mixed, shared\: bool\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Container\:\:getDependencies\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Performance\\ContainerCompiler\:\:analyzeBinding\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Performance\\ContainerCompiler\:\:calculateComplexityScore\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateFactoryMethod\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Performance\\ContainerCompiler\:\:identifyOptimizations\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_filter expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_keys expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_sum expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, ''count'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$class of function class_exists expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#1 \$value of function count expects array\|Countable, mixed given\.$#'
+			identifier: argument.type
+			count: 8
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#2 \$bindingAnalysis of method Denosys\\Container\\Performance\\ContainerCompiler\:\:generateFactoryMethod\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#2 \$bindingInfo of method Denosys\\Container\\Performance\\ContainerCompiler\:\:analyzeBinding\(\) expects array\<string, mixed\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of function in_array expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Parameter \#3 \$dependencies of method Denosys\\Container\\Performance\\ContainerCompiler\:\:calculateComplexityScore\(\) expects array\<string\>, array\<string, array\<array\<string, bool\|string\>\|string\>\|bool\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Part \$depType \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Property Denosys\\Container\\Performance\\ContainerCompiler\:\:\$compiledClassName \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Property Denosys\\Container\\Performance\\ContainerCompiler\:\:\$compiledNamespace \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Result of \|\| is always false\.$#'
+			identifier: booleanOr.alwaysFalse
+			count: 1
+			path: src/Container/Performance/ContainerCompiler.php
+
+		-
+			message: '#^Binary operation "\+" between mixed and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Binary operation "/" between mixed and \(array\|float\|int\<1, max\>\) results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access an offset on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access offset ''average_time'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access offset ''count'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access offset ''memory_mb'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access offset ''service'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot access offset ''type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\PerformanceProfiler\:\:getBottlenecks\(\) should return array\<string, mixed\> but returns list\<array\<string, float\|int\|string\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\PerformanceProfiler\:\:getOptimizationSuggestions\(\) should return array\<string, mixed\> but returns list\<string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Parameter \#1 \.\.\.\$arg1 of function max expects non\-empty\-array, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Parameter \$slowestResolutions of class Denosys\\Container\\PerformanceReport constructor expects array\<string, float\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Part \$bottleneck\[''average_time''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Part \$bottleneck\[''count''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Part \$bottleneck\[''memory_mb''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Part \$bottleneck\[''service''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Property Denosys\\Container\\Performance\\PerformanceProfiler\:\:\$methodInjectionTimes \(array\<string, float\>\) does not accept array\<int\|string, float\>\.$#'
+			identifier: assign.propertyType
+			count: 2
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Property Denosys\\Container\\Performance\\PerformanceProfiler\:\:\$resolutionTimes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Container/Performance/PerformanceProfiler.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getClass\(\) return type with generic class ReflectionClass does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getClass\(\) should return ReflectionClass but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getConstructorParameters\(\) should return array\<string, mixed\> but returns list\<array\<string, mixed\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getConstructorParameters\(\) should return array\<string, mixed\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getFunction\(\) should return ReflectionFunction but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getMemoryUsage\(\) should return array\<string, int\> but returns array\<string, float\|int\<0, max\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getMethod\(\) should return ReflectionMethod but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getMethodParameters\(\) should return array\<string, mixed\> but returns list\<array\<string, mixed\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Method Denosys\\Container\\Performance\\ReflectionCache\:\:getMethodParameters\(\) should return array\<string, mixed\> but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class\-string\<T of object\>\|T of object, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Performance/ReflectionCache.php
+
+		-
+			message: '#^Binary operation "/" between mixed and 1024 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 3
+			path: src/Container/PerformanceReport.php
+
+		-
+			message: '#^Method Denosys\\Container\\PerformanceReport\:\:getMostResolvedServices\(\) should return array\<string\> but returns array\<string, int\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/PerformanceReport.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Resolution\\MultiResolutionManager\:\:getAllImplementations\(\) should return array\<string\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Resolution\\MultiResolutionManager\:\:getImplementationDetails\(\) should return array\<string, mixed\> but returns list\<array\<string, array\<string, mixed\>\|int\|string\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Resolution\\MultiResolutionManager\:\:resolveAll\(\) should return array\<object\> but returns list\<mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Parameter \#1 \$object of function get_class expects object, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Parameter \#2 \$offset of function array_splice expects int, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/MultiResolutionManager.php
+
+		-
+			message: '#^Method Denosys\\Container\\Resolution\\ScopedBindingContext\:\:restoreBindingsFromSnapshots\(\) has parameter \$snapshots with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Offset ''concrete'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Offset ''previous'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Offset ''shared'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Offset ''snapshots'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Parameter \#1 \$abstract of method Denosys\\Container\\Resolution\\ScopedBindingContext\:\:applySingleBinding\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Parameter \#1 \$snapshots of method Denosys\\Container\\Resolution\\ScopedBindingContext\:\:restoreBindingsFromSnapshots\(\) expects array\<string, array\{existed\: bool, binding\: array\|null\}\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Parameter \#2 \$concrete of method Denosys\\Container\\ContainerInterface\:\:bind\(\) expects Closure\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Parameter \#3 \$shared of method Denosys\\Container\\ContainerInterface\:\:bind\(\) expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Property Denosys\\Container\\Resolution\\ScopedBindingContext\:\:\$activeScopedBindings \(array\<string, mixed\>\) does not accept array\<int\|string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Property Denosys\\Container\\Resolution\\ScopedBindingContext\:\:\$activeScopedBindings \(array\<string, mixed\>\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Resolution/ScopedBindingContext.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 2
+			path: src/Container/ServiceSpy.php
+
+		-
+			message: '#^Method Denosys\\Container\\ServiceSpyProxy\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Container/ServiceSpyProxy.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, ''get_class'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Testing/ContainerAssertions.php
+
+		-
+			message: '#^Parameter \#1 \$expected of static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) expects class\-string\<object\>, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Testing/ContainerAssertions.php
+
+		-
+			message: '#^Parameter \#2 \$concrete of method Denosys\\Container\\Container\:\:bind\(\) expects Closure\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Testing/TestContainerBuilder.php
+
+		-
+			message: '#^Property Denosys\\Container\\Testing\\TestContainerBuilder\:\:\$bindings \(array\<string, mixed\>\) does not accept array\<int\|string, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Container/Testing/TestContainerBuilder.php
+
+		-
+			message: '#^Cannot access offset ''concrete_class'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Dead catch \- ReflectionException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 2
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#1 \$class of function class_exists expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#1 \$interface of function interface_exists expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#1 \$interface of function interface_exists expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#2 \$abstract of method Denosys\\Container\\Validation\\ContainerValidator\:\:detectCircularDependencies\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#2 \$abstract of method Denosys\\Container\\Validation\\ContainerValidator\:\:detectMissingBindings\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#3 \$abstract of class Denosys\\Container\\ValidationIssue constructor expects string\|null, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#3 \$boundAbstracts of method Denosys\\Container\\Validation\\ContainerValidator\:\:detectCircularDependencies\(\) expects array\<string\>, list\<int\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Parameter \#3 \$boundAbstracts of method Denosys\\Container\\Validation\\ContainerValidator\:\:detectMissingBindings\(\) expects array\<string\>, list\<int\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Part \$concreteClass \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 2
+			path: src/Container/Validation/ContainerValidator.php
+
+		-
+			message: '#^Method Denosys\\Container\\ValidationResult\:\:getIssues\(\) should return array\<string, mixed\> but returns array\<Denosys\\Container\\ValidationIssue\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Container/ValidationResult.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Parameter \#4 \$suggestions of method Denosys\\Container\\Exceptions\\ContainerResolutionException\:\:__construct\(\) expects array\<string\>\|null, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Part \$existingType \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Part \$newType \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Part \$reason \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Part \$validationError \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Exceptions/BindingConflictException.php
+
+		-
+			message: '#^Method Denosys\\Container\\Exceptions\\CircularDependencyException\:\:getDependencyChain\(\) should return array\<string, mixed\> but returns array\<string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Exceptions/CircularDependencyException.php
+
+		-
+			message: '#^Parameter \#4 \$suggestions of method Denosys\\Container\\Exceptions\\ContainerResolutionException\:\:__construct\(\) expects array\<string\>\|null, array\<int\|string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Exceptions/CircularDependencyException.php
+
+		-
+			message: '#^Method Denosys\\Container\\Exceptions\\ContainerExceptionFactory\:\:createCircularDependencyException\(\) has parameter \$resolutionStack with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Exceptions/ContainerExceptionFactory.php
+
+		-
+			message: '#^Parameter \#2 \$dependencyChain of class Denosys\\Container\\Exceptions\\CircularDependencyException constructor expects array\<string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Exceptions/ContainerExceptionFactory.php
