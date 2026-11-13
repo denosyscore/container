@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.0 – 2026-11-13
+
+- Released with the framework's 0.18 line. Requires its DenoSys dependencies
+  at `^0.18`; no other changes.
+
 ## 0.17.0 – 2026-11-12
 
 - Released with the framework's 0.17 line. Requires its DenoSys dependencies
